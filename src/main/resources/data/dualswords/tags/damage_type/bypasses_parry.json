@@ -1,0 +1,11 @@
+{
+    "values": [
+        "#minecraft:bypasses_shield",
+        "#minecraft:is_explosion",
+        {
+            "id": "#proviorigins:disables_shields",
+            "required": false
+        },
+        "dualswords:riposte"
+    ]
+}

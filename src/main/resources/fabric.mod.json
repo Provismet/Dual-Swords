@@ -1,41 +1,40 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "dualswords",
 	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Dual Swords",
+	"description": "",
 	"authors": [
-		"Me!"
+		"Provismet"
 	],
+
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/Provismet/Dual-Swords",
+		"sources": "https://github.com/Provismet/Dual-Swords",
+		"issues": "https://github.com/Provismet/Dual-Swords/issues"
 	},
-	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+
+	"license": "Apache 2.0",
+	"icon": "assets/dualswords/icon.png",
 	"environment": "*",
+	
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.provismet.dualswords.DualSwordsMain"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			
 		]
 	},
+
 	"mixins": [
-		"modid.mixins.json",
-		{
-			"config": "modid.client.mixins.json",
-			"environment": "client"
-		}
+		"dualswords.mixins.json"
 	],
+
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
