@@ -42,9 +42,9 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     // Shields take 5 ticks to become active, swords should be faster than that.
-    @Inject(method="isBlocking", at=@At("TAIL"), cancellable=true)
+    @Inject(method="isBlocking", at=@At(value="INVOKE", target="Lnet/minecraft/item/Item;getMaxUseTime(Lnet/minecraft/item/ItemStack;)I", shift=At.Shift.BEFORE), cancellable=true)
     private void quickParry (CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(isParrying());
+        if (isParrying()) cir.setReturnValue(this.activeItemStack.getMaxUseTime() - this.itemUseTimeLeft >= 2);
     }
     
     @Inject(method="blockedByShield", at=@At("RETURN"), cancellable=true)
@@ -67,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity {
             attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2f) + enchantDamage);
 
             if ((LivingEntity)(Object)this instanceof PlayerEntity player) {
-                player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30 + 5 * EnchantmentHelper.getLevel(Enchantments.DAISHO, this.activeItemStack));
+                player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(Enchantments.DAISHO, this.activeItemStack));
                 player.spawnSweepAttackParticles();
                 player.stopUsingItem();
             }
