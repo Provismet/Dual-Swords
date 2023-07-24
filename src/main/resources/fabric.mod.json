@@ -14,7 +14,7 @@
 		"issues": "https://github.com/Provismet/Dual-Swords/issues"
 	},
 
-	"license": "Apache 2.0",
+	"license": "Apache-2.0",
 	"icon": "assets/dualswords/icon.png",
 	"environment": "*",
 	
