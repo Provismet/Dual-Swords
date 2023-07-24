@@ -26,6 +26,7 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 @Mixin(SwordItem.class)
@@ -67,7 +68,7 @@ public abstract class SwordItemMixin extends ToolItem {
     public ItemStack finishUsing (ItemStack itemStack, World world, LivingEntity user) {
         if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0) {
             if (user instanceof PlayerEntity player) {
-                player.getItemCooldownManager().set(itemStack.getItem(), 30 + 5 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack));
+                player.getItemCooldownManager().set(itemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack));
             }
         }
         return itemStack;
@@ -76,8 +77,11 @@ public abstract class SwordItemMixin extends ToolItem {
     @Override
     public void onStoppedUsing (ItemStack itemStack, World world, LivingEntity user, int remainingUseTicks) {
         if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0 && user instanceof PlayerEntity player) {
-            if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem()))
-                player.getItemCooldownManager().set(itemStack.getItem(), (int)((30 + 5 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack)) * (1f - ((float)remainingUseTicks / 20f))));
+            if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem())) {
+                player.getItemCooldownManager().set(
+                    itemStack.getItem(),
+                    (int)((30 + 8 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack)) * (1f - ((float)remainingUseTicks / (float)getMaxUseTime(itemStack)))));
+            }
         }
     }
 
@@ -85,8 +89,9 @@ public abstract class SwordItemMixin extends ToolItem {
     private void applyOffhandMods (EquipmentSlot slot, CallbackInfoReturnable<Multimap<EntityAttribute, EntityAttributeModifier>> cir) {
         if (slot == EquipmentSlot.OFFHAND) {
             if (this.dualswords_offHandAttributes == null) {
+                double damageValue = MathHelper.absMax(1, MathHelper.roundDownToMultiple(((this.attackDamage - 1.0) / 3.5) * 2.0, 1)) / 2.0;
                 ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Offhand Weapon modifier", (double)this.attackDamage / 2.5, EntityAttributeModifier.Operation.ADDITION));
+                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Offhand Weapon modifier", damageValue, EntityAttributeModifier.Operation.ADDITION));
                 this.dualswords_offHandAttributes = builder.build();
             }
             cir.setReturnValue(this.dualswords_offHandAttributes);
