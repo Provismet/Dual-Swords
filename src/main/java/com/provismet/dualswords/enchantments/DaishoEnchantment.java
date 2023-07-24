@@ -1,18 +1,16 @@
 package com.provismet.dualswords.enchantments;
 
-import net.minecraft.enchantment.DamageEnchantment;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentTarget;
-import net.minecraft.entity.EquipmentSlot;
 
-public class DaishoEnchantment extends Enchantment {
+public class DaishoEnchantment extends OffhandEnchantment {
     public DaishoEnchantment () {
-        super(Rarity.UNCOMMON, EnchantmentTarget.WEAPON, new EquipmentSlot[] {EquipmentSlot.OFFHAND});
+        super(Rarity.RARE);
     }
     
     @Override
     public boolean canAccept (Enchantment other) {
-        return super.canAccept(other) && !(other instanceof DamageEnchantment) && !(other instanceof RiposteEnchantment);
+        return super.canAccept(other) && !(other instanceof RiposteEnchantment);
+
     }
 
     @Override
@@ -20,7 +18,22 @@ public class DaishoEnchantment extends Enchantment {
         return 5;
     }
 
+    @Override
+    public boolean isAvailableForRandomSelection () {
+        return false;
+    }
+
+    @Override
+    public boolean isAvailableForEnchantedBookOffer () {
+        return false;
+    }
+
+    @Override
+    public boolean isTreasure () {
+        return true;
+    }
+
     public static float getOffhandDamage (int level) {
-        return 1.5f * level;
+        return 1.2f * level;
     }
 }
