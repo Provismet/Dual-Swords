@@ -38,15 +38,13 @@ public abstract class LivingEntityMixin extends Entity {
     protected int itemUseTimeLeft;
 
     private boolean isParrying () {
-        if (!((LivingEntity)(Object)this).isBlocking()) return false;
         return EnchantmentHelper.getLevel(Enchantments.PARRY, this.activeItemStack) > 0;
     }
 
     // Shields take 5 ticks to become active, swords should be faster than that.
     @Inject(method="isBlocking", at=@At("TAIL"), cancellable=true)
     private void quickParry (CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValueZ() && EnchantmentHelper.getLevel(Enchantments.PARRY, this.activeItemStack) > 0)
-            cir.setReturnValue(this.activeItemStack.getMaxUseTime() - this.itemUseTimeLeft >= 1);
+        cir.setReturnValue(isParrying());
     }
     
     @Inject(method="blockedByShield", at=@At("RETURN"), cancellable=true)
@@ -66,18 +64,19 @@ public abstract class LivingEntityMixin extends Entity {
             if (this.activeItemStack.getItem() instanceof SwordItem sword) itemDamage = sword.getAttackDamage();
             else if (this.activeItemStack.getItem() instanceof MiningToolItem tool) itemDamage = tool.getAttackDamage();
 
-            attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2) + enchantDamage);
+            attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2f) + enchantDamage);
 
             if ((LivingEntity)(Object)this instanceof PlayerEntity player) {
                 player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30);
+                player.spawnSweepAttackParticles();
+                player.stopUsingItem();
             }
         }
     }
 
-    @ModifyArg(method="handleStatus", at=@At(value="INVOKE", target="Lnet/minecraft/entity/Entity;playSound(Lnet/minecraft/sound/SoundEvent;FF)V"), index=0)
+    @ModifyArg(method="handleStatus(B)V", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;playSound(Lnet/minecraft/sound/SoundEvent;FF)V", ordinal=2))
     private SoundEvent playParrySound (SoundEvent soundEvent) {
-        if (soundEvent == SoundEvents.ITEM_SHIELD_BLOCK && EnchantmentHelper.getLevel(Enchantments.PARRY, this.activeItemStack) > 0)
-            return SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP;
+        if (isParrying()) return SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP;
         return soundEvent;
     }
 }
