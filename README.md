@@ -19,3 +19,7 @@ Enchantments can grant the ability to parry attacks or modify the offhand proper
   - Incompatible with Riposte.
 
 All of the new enchantments are incompatible with damage enchantments (such as Sharpness and Smite), Fire Aspect, Sweeping Edge, and Looting.
+
+## Download Pages
+- [Modrinth](https://modrinth.com/mod/dual-swords)
+- [CurseForge](https://curseforge.com/minecraft/mc-mods/dual-swords)
