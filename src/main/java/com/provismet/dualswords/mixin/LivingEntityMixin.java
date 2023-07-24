@@ -25,7 +25,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
-@Mixin(LivingEntity.class)
+@Mixin(value=LivingEntity.class, priority=999)
 public abstract class LivingEntityMixin extends Entity {
     protected LivingEntityMixin (EntityType<?> type, World world) {
         super(type, world);
