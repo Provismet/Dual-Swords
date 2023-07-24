@@ -30,9 +30,6 @@ import net.minecraft.world.World;
 
 @Mixin(SwordItem.class)
 public abstract class SwordItemMixin extends ToolItem {
-    private static final int COOLDOWN = 30;
-    private static final int MAX_USE = 20;
-
     @Unique
     private Multimap<EntityAttribute, EntityAttributeModifier> dualswords_offHandAttributes = null;
 
@@ -62,7 +59,7 @@ public abstract class SwordItemMixin extends ToolItem {
 
     @Override
     public int getMaxUseTime (ItemStack itemStack) {
-        if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0) return MAX_USE;
+        if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0) return 20;
         return super.getMaxUseTime(itemStack);
     }
 
@@ -70,7 +67,7 @@ public abstract class SwordItemMixin extends ToolItem {
     public ItemStack finishUsing (ItemStack itemStack, World world, LivingEntity user) {
         if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0) {
             if (user instanceof PlayerEntity player) {
-                player.getItemCooldownManager().set((SwordItem)(Object)this, COOLDOWN);
+                player.getItemCooldownManager().set(itemStack.getItem(), 30 + 5 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack));
             }
         }
         return itemStack;
@@ -78,8 +75,10 @@ public abstract class SwordItemMixin extends ToolItem {
 
     @Override
     public void onStoppedUsing (ItemStack itemStack, World world, LivingEntity user, int remainingUseTicks) {
-        if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0 && user instanceof PlayerEntity player)
-            player.getItemCooldownManager().set((SwordItem)(Object)this, (int)((float)COOLDOWN * (1f - ((float)remainingUseTicks / (float)MAX_USE))));
+        if (EnchantmentHelper.getLevel(Enchantments.PARRY, itemStack) > 0 && user instanceof PlayerEntity player) {
+            if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem()))
+                player.getItemCooldownManager().set(itemStack.getItem(), (int)((30 + 5 * EnchantmentHelper.getLevel(Enchantments.DAISHO, itemStack)) * (1f - ((float)remainingUseTicks / 20f))));
+        }
     }
 
     @Inject(method="getAttributeModifiers", at=@At("HEAD"), cancellable=true)
