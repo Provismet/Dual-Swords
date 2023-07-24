@@ -23,7 +23,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private float addDaishoDamage (float currentDamage) {
         if (((PlayerEntity)(Object)this).getMainHandStack().getItem() instanceof ToolItem) { // Daisho should only work when dual-wielding.
             int DaishoLevel = EnchantmentHelper.getLevel(Enchantments.DAISHO, ((PlayerEntity)(Object)(this)).getOffHandStack());
-            return currentDamage + DaishoEnchantment.getOffhandDamage(DaishoLevel);
+            return currentDamage + DaishoEnchantment.getOffhandDamageStatic(DaishoLevel);
         }
         else return currentDamage;
     }

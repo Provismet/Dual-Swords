@@ -33,7 +33,12 @@ public class DaishoEnchantment extends OffhandEnchantment {
         return true;
     }
 
-    public static float getOffhandDamage (int level) {
+    @Override
+    public float getOffhandDamage (int level) {
+        return getOffhandDamageStatic(level);
+    }
+
+    public static float getOffhandDamageStatic (int level) {
         return 1.2f * level;
     }
 }

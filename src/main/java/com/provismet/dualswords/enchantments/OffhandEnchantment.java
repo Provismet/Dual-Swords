@@ -21,4 +21,8 @@ public abstract class OffhandEnchantment extends Enchantment {
             !(other instanceof SweepingEnchantment) &&
             !(other instanceof LuckEnchantment);
     }
+
+    public float getOffhandDamage (int level) {
+        return 0f;
+    }
 }

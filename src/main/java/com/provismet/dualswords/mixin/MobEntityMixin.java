@@ -23,6 +23,6 @@ public abstract class MobEntityMixin extends LivingEntity implements Targeter {
     @ModifyArg(method="tryAttack", at=@At(value="INVOKE", target="Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     private float addDaishoDamage (float currentDamage) {
         int daishoLevel = EnchantmentHelper.getLevel(Enchantments.DAISHO, ((MobEntity)(Object)this).getOffHandStack());
-        return currentDamage + DaishoEnchantment.getOffhandDamage(daishoLevel);
+        return currentDamage + DaishoEnchantment.getOffhandDamageStatic(daishoLevel);
     }
 }
