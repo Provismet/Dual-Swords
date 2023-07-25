@@ -67,6 +67,7 @@ public abstract class LivingEntityMixin extends Entity {
             attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2f) + enchantDamage);
 
             if ((LivingEntity)(Object)this instanceof PlayerEntity player) {
+                this.activeItemStack.postHit(attacker, player);
                 player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(Enchantments.DAISHO, this.activeItemStack));
                 player.spawnSweepAttackParticles();
                 player.stopUsingItem();
