@@ -44,11 +44,11 @@ public class DualSwordsMain implements ModInitializer {
                     lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(Enchantments.DAISHO)));
                     tableBuilder.pool(lootPool);
                 }
-            }
-            if (LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY.equals(id)) {
-                LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.05f));
-                lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(Enchantments.DAISHO)));
-                tableBuilder.pool(lootPool);
+                else if (LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY.equals(id)) {
+                    LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.05f));
+                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(Enchantments.DAISHO)));
+                    tableBuilder.pool(lootPool);
+                }
             }
         });
     }
