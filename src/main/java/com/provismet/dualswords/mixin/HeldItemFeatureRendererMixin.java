@@ -31,6 +31,11 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
         if (EnchantmentHelper.getLevel(Enchantments.PARRY, stack) > 0) {
             matrices.translate(0f, -0.25f, 0.2f);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
+            
+            if (entity.isUsingItem() && entity.getActiveItem() == stack) {
+                float armMultiplier = arm == Arm.RIGHT ? -1f : 1f;
+                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(armMultiplier * 45f));
+            }
         }
     }
 }
