@@ -1,6 +1,7 @@
 name: Balance Feedback
 description: Issues relating to a feature being too strong or too weak.
 labels: "balance"
+projects: "Provismet/3"
 body:
   - type: dropdown
     id: tweak-type
