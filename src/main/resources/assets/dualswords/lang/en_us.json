@@ -5,8 +5,7 @@
     "enchantment.dualswords.riposte": "Riposte",
     "enchantment.dualswords.daisho": "Daisho",
 
-    "death.attack.riposte": "%1$s suffered a riposte",
-    "death.attack.riposte.player": "%1$s couldn't handle the swordplay of %2$s",
+    "death.attack.riposte": "%1$s couldn't handle the swordplay of %2$s",
     "death.attack.riposte.item": "%1$s couldn't handle the swordplay of %2$s using %3$s",
 
     "__support__desc": "Descriptions for Enchantment Descriptions, Enchanted Tooltips, and other mods that provide descriptions to enchantments.",
