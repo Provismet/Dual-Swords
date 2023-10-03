@@ -58,14 +58,15 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method="takeShieldHit", at=@At("HEAD"))
     private void riposte (LivingEntity attacker, CallbackInfo info) {
         if (isParrying()) {
-            float itemDamage = 0f;
-            float enchantDamage = Enchantments.RIPOSTE.getDamage(EnchantmentHelper.getLevel(Enchantments.RIPOSTE, this.activeItemStack));
+            if (this.distanceTo(attacker) <= 4.5f) {
+                float itemDamage = 0f;
+                float enchantDamage = Enchantments.RIPOSTE.getDamage(EnchantmentHelper.getLevel(Enchantments.RIPOSTE, this.activeItemStack));
 
-            if (this.activeItemStack.getItem() instanceof SwordItem sword) itemDamage = sword.getAttackDamage();
-            else if (this.activeItemStack.getItem() instanceof MiningToolItem tool) itemDamage = tool.getAttackDamage();
+                if (this.activeItemStack.getItem() instanceof SwordItem sword) itemDamage = sword.getAttackDamage();
+                else if (this.activeItemStack.getItem() instanceof MiningToolItem tool) itemDamage = tool.getAttackDamage();
 
-            attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2f) + enchantDamage);
-
+                attacker.damage(((LivingEntity)(Object)this).getDamageSources().create(DamageTypes.RIPOSTE, (LivingEntity)(Object)this), (itemDamage / 2f) + enchantDamage);
+            }
             if ((LivingEntity)(Object)this instanceof PlayerEntity player) {
                 this.activeItemStack.postHit(attacker, player);
                 player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(Enchantments.DAISHO, this.activeItemStack));
