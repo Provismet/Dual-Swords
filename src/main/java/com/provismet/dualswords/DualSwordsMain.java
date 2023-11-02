@@ -1,5 +1,7 @@
 package com.provismet.dualswords;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,8 @@ public class DualSwordsMain implements ModInitializer {
     public static final String MODID = "dualswords";
     public static final Logger LOGGER = LoggerFactory.getLogger("Dual Swords");
 
+    public static final UUID OFFHAND_ATTRIBUTE_ID = UUID.nameUUIDFromBytes("DualSwords Offhand Weapon Damage".getBytes());
+    
     public static Identifier identifier (String path) {
         return new Identifier(MODID, path);
     }

@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.enchantments.Enchantments;
+import com.provismet.dualswords.utility.MoreMath;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
@@ -89,9 +91,9 @@ public abstract class SwordItemMixin extends ToolItem {
     private void applyOffhandMods (EquipmentSlot slot, CallbackInfoReturnable<Multimap<EntityAttribute, EntityAttributeModifier>> cir) {
         if (slot == EquipmentSlot.OFFHAND) {
             if (this.dualswords_offHandAttributes == null) {
-                double damageValue = MathHelper.absMax(1, MathHelper.roundDownToMultiple(((this.attackDamage - 1.0) / 3.5) * 2.0, 1)) / 2.0;
+                double damageValue = MathHelper.absMax(0.5, MoreMath.roundDownToMultiple(this.attackDamage / 3.5, 0.5));
                 ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Offhand Weapon modifier", damageValue, EntityAttributeModifier.Operation.ADDITION));
+                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(DualSwordsMain.OFFHAND_ATTRIBUTE_ID, "Offhand Weapon modifier", damageValue, EntityAttributeModifier.Operation.ADDITION));
                 this.dualswords_offHandAttributes = builder.build();
             }
             cir.setReturnValue(this.dualswords_offHandAttributes);
