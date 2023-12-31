@@ -1,7 +1,11 @@
+<div align="center">
+
 # Dual Swords
-[![Image](https://img.shields.io/badge/license-Apache2.0-orange?style=flat-square)](https://github.com/Provismet/Dual-Swords/blob/1.20/LICENSE)
-![Image](https://img.shields.io/badge/environment-both-4caf50?style=flat-square)
-![Image](https://img.shields.io/badge/mod%20loader-fabric-d64541?style=flat-square)
+[![](https://img.shields.io/jitpack/version/com.github.Provismet/Dual-Swords?style=flat-square&logo=jitpack&color=F6F6F6)](https://jitpack.io/#Provismet/Dual-Swords)
+[![](https://img.shields.io/modrinth/dt/3VQn6Vwv?style=flat-square&logo=modrinth&color=F6F6F6)](https://modrinth.com/mod/dual-swords)
+[![](https://img.shields.io/curseforge/dt/893211?style=flat-square&logo=curseforge&color=F6F6F6)](https://www.curseforge.com/minecraft/mc-mods/dual-swords)
+
+</div>
 
 ## Summary
 A Minecraft Fabric mod that adds dual wielding mechanics to the game. By default, all swords provide a small amount of damage when wielded in the offhand.  
