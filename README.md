@@ -9,22 +9,21 @@
 
 </div>
 
-## Summary
-A Minecraft Fabric mod that adds dual wielding mechanics to the game. By default, all swords provide a small amount of damage when wielded in the offhand.  
-Enchantments can grant the ability to parry attacks or modify the offhand properties.
+A Minecraft Fabric mod that adds dual wielding mechanics to the game. This is a mechanical addition to Combat+, granting any Dual Weapon (such as swords) an offhand damage bonus.  
+Dual Swords also implements unique mechanics that grant use-actions to Dual Weapons: parrying attacks, or lunging at your opponent.
 
 ## Enchantments
-- Parry 
-  - Items with parry can be raised like a shield to parry an attack, negating damage and harming the attacker.  
-- Riposte
-  - Increases the retaliation damage from a parry.
-  - Incompatible with Daisho.
-- Daisho
-  - Increases offhand damage bonus and parry cooldown.
-  - Only active when dual-wielding.
-  - Incompatible with Riposte.
+All enchantments added are of the *Offhand* category granted by Combat+. These enchantments are universally incompatible with any Damage Enchantment and most vanilla enchantments, such as Looting, Fire Aspect, Sweeping Edge, and Knockback.
 
-All of the new enchantments are incompatible with damage enchantments (such as Sharpness and Smite), Fire Aspect, Sweeping Edge, and Looting.
+| Name | Description | Effect Per Level | Max Level | Incompatibilities |
+| :--- | :---------- | :--------------- | :-------: | :---------------: |
+| Parry | Grants the weapon a use-action, allowing it to block attacks and counter. | Block duration. | 3 | All *lunge-type* enchantments. |
+| Riposte | Increases the damage dealt from a parry's counterattack. | More damage. | 3 | All *lunge-type* enchantments and Daisho. |
+| Deflection | Increases the return speed of deflected projetiles. | Higher return speed. | 3 | All *lunge-type* enchantments. |
+| Lunge | Grants the weapon a use-action, allowing the user to dash forwards and damage a target. | Higher velocity. | 3 | All *parry-type* enchantments. |
+| Thrusting | Increases lunge damage. | More damage. | 2 | All *parry-type* enchantments and Daisho. |
+| Forceful | Grants increased knockback to lunges. | More knockback. | 2 | All *parry-type* enchantments. |
+| Daisho | Grants increased damage when wielding two Dual Weapons. | More damage. | 5 | Thrusting and Riposte. |
 
 ## Download Pages
 - [Modrinth](https://modrinth.com/mod/dual-swords)
