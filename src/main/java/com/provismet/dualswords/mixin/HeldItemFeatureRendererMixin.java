@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.provismet.dualswords.enchantments.Enchantments;
+import com.provismet.dualswords.registry.DSEnchantments;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -28,7 +28,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 
     @Inject(method="renderItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", shift=At.Shift.BEFORE))
     private void flipBlade (LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if (EnchantmentHelper.getLevel(Enchantments.PARRY, stack) > 0) {
+        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, stack) > 0) {
             matrices.translate(0f, -0.25f, 0.2f);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
             
@@ -36,6 +36,10 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
                 float armMultiplier = arm == Arm.RIGHT ? -1f : 1f;
                 matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(armMultiplier * 45f));
             }
+        }
+        else if (entity.isUsingItem() && entity.getActiveItem().equals(stack) && EnchantmentHelper.getLevel(DSEnchantments.LUNGE, stack) > 0) {
+            matrices.translate(0f, -0.25f, 0.2f);
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
         }
     }
 }

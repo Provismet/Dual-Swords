@@ -3,7 +3,7 @@
 	"id": "dualswords",
 	"version": "${version}",
 	"name": "Dual Swords",
-	"description": "Adds dual wielding and parry/riposte mechanics to Minecraft.",
+	"description": "Adds dual wielding and parry/riposte mechanics to Minecraft. Part of the Combat+ collection.",
 	"authors": [
 		"Provismet"
 	],
@@ -14,13 +14,16 @@
 		"issues": "https://github.com/Provismet/Dual-Swords/issues"
 	},
 
-	"license": "Apache-2.0",
+	"license": "Lily License",
 	"icon": "assets/dualswords/icon.png",
 	"environment": "*",
 	
 	"entrypoints": {
 		"main": [
 			"com.provismet.dualswords.DualSwordsMain"
+		],
+		"fabric-datagen": [
+			"com.provismet.datagen.dualswords.DualSwordsDatagen"
 		]
 	},
 
@@ -29,16 +32,17 @@
 	],
 
 	"depends": {
-		"fabricloader": ">=0.14.21",
+		"fabricloader": ">=0.15.0",
 		"minecraft": "~1.20",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+        "combat-plus": "*"
 	},
 
 	"custom": {
 		"modmenu": {
 		  "links": {
-			"wiki.dualswords.label": "https://github.com/Provismet/Dual-Swords/wiki"
+			"wiki.lilylib.link": "https://github.com/Provismet/Dual-Swords/wiki"
 		  }
 		}
 	  }

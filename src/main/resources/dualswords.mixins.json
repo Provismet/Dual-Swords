@@ -3,10 +3,8 @@
 	"package": "com.provismet.dualswords.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"SwordItemMixin",
-		"LivingEntityMixin",
-		"PlayerEntityMixin",
-		"MobEntityMixin"
+		"ItemMixin",
+		"LivingEntityMixin"
 	],
 	"client": [
 		"HeldItemRendererMixin",

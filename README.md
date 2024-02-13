@@ -5,6 +5,8 @@
 [![](https://img.shields.io/modrinth/dt/3VQn6Vwv?style=flat-square&logo=modrinth&color=F6F6F6)](https://modrinth.com/mod/dual-swords)
 [![](https://img.shields.io/curseforge/dt/893211?style=flat-square&logo=curseforge&color=F6F6F6)](https://www.curseforge.com/minecraft/mc-mods/dual-swords)
 
+<img src="https://github.com/Provismet/CombatPlus-Core/assets/17149901/d7ee8c04-1769-4873-b5a4-8fa23ed26a30" width=250px>
+
 </div>
 
 ## Summary

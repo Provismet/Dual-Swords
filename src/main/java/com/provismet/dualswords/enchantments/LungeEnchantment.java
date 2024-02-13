@@ -1,8 +1,8 @@
 package com.provismet.dualswords.enchantments;
 
-public class ParryEnchantment extends AbstractParryTypeEnchantment {
-    public ParryEnchantment () {
-        super(Rarity.UNCOMMON);
+public class LungeEnchantment extends AbstractLungeTypeEnchantment {
+    public LungeEnchantment () {
+        super(Rarity.RARE);
     }
 
     @Override
@@ -12,11 +12,11 @@ public class ParryEnchantment extends AbstractParryTypeEnchantment {
 
     @Override
     public int getMinPower(int level) {
-        return 5 + 10 * (level - 1);
+        return 15 + 5 * (level - 1);
     }
 
     @Override
-    public int getMaxPower(int level) {
+    public int getMaxPower (int level) {
         return this.getMinPower(level) + 50;
     }
 }

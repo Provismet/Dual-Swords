@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "dualswords:parry",
+    "dualswords:riposte",
+    "dualswords:deflect",
+    "dualswords:lunge",
+    "dualswords:forceful",
+    "dualswords:thrusting",
+    "dualswords:daisho"
+  ]
+}
