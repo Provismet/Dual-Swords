@@ -108,7 +108,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                         itemDamage = dual.getOffhandDamage() * 1.2f;
                     }
 
-                    attacker.damage(DSDamageTypes.riposte(attacker), itemDamage + enchantDamage);
+                    attacker.damage(DSDamageTypes.riposte(player), itemDamage + enchantDamage);
                 }
 
                 if (this.activeItemStack.getItem() instanceof MeleeWeapon melee) {
