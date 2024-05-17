@@ -1,17 +1,21 @@
 package com.provismet.dualswords.enchantments;
 
 import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
-
+import com.provismet.CombatPlusCore.utility.CPCItemTags;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EquipmentSlot;
 
 public class DeflectEnchantment extends AbstractParryTypeEnchantment {
     public DeflectEnchantment () {
-        super(Rarity.UNCOMMON);
-    }
-    
-    @Override
-    public int getMaxLevel () {
-        return 3;
+        super(Enchantment.properties(
+                CPCItemTags.DUAL_WEAPON,
+                3,
+                3,
+                Enchantment.leveledCost(5, 5),
+                Enchantment.leveledCost(25, 5),
+                2,
+                EquipmentSlot.OFFHAND
+        ));
     }
     
     @Override
@@ -20,15 +24,5 @@ public class DeflectEnchantment extends AbstractParryTypeEnchantment {
             !(other instanceof DaishoEnchantment) &&
             !(other instanceof RiposteEnchantment) &&
             !CPCEnchantmentHelper.isWeaponUtility(other);
-    }
-
-    @Override
-    public int getMinPower (int level) {
-        return 5 + level * 5;
-    }
-
-    @Override
-    public int getMaxPower(int level) {
-        return super.getMinPower(level) + 30;
     }
 }

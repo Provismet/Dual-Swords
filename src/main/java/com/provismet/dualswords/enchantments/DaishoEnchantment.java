@@ -1,6 +1,7 @@
 package com.provismet.dualswords.enchantments;
 
 import com.provismet.CombatPlusCore.enchantments.OffHandEnchantment;
+import com.provismet.CombatPlusCore.utility.CPCItemTags;
 import com.provismet.CombatPlusCore.utility.WeaponTypes;
 
 import net.minecraft.enchantment.Enchantment;
@@ -9,7 +10,15 @@ import net.minecraft.entity.LivingEntity;
 
 public class DaishoEnchantment extends OffHandEnchantment {
     public DaishoEnchantment () {
-        super(Rarity.RARE);
+        super(Enchantment.properties(
+                CPCItemTags.DUAL_WEAPON,
+                2,
+                5,
+                Enchantment.leveledCost(20, 5),
+                Enchantment.leveledCost(30, 10),
+                8,
+                EquipmentSlot.OFFHAND
+        ));
     }
 
     @Override
@@ -18,11 +27,6 @@ public class DaishoEnchantment extends OffHandEnchantment {
             return 0.8f * level;
         }
         return 0f;
-    }
-
-    @Override
-    public int getMaxLevel () {
-        return 5;
     }
 
     @Override

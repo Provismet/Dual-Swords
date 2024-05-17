@@ -65,6 +65,8 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     @Shadow
     public abstract ItemStack getOffHandStack ();
 
+    @Shadow public abstract ItemStack getActiveItem();
+
     @Unique
     private boolean isParrying () {
         return EnchantmentHelper.getLevel(DSEnchantments.PARRY, this.activeItemStack) > 0;
@@ -105,7 +107,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                     float enchantDamage = DSEnchantments.RIPOSTE.getDamage(EnchantmentHelper.getLevel(DSEnchantments.RIPOSTE, this.activeItemStack));
 
                     if (this.activeItemStack.getItem() instanceof DualWeapon dual) {
-                        itemDamage = dual.getOffhandDamage() * 1.2f;
+                        itemDamage = dual.getOffhandDamage(this.activeItemStack) * 1.2f;
                     }
 
                     attacker.damage(DSDamageTypes.riposte(player), itemDamage + enchantDamage);
@@ -115,7 +117,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                     melee.postChargedHit(this.activeItemStack, player, attacker);
                 }
                 CPCEnchantmentHelper.postChargedHit(player, attacker, this.activeItemStack);
-                this.activeItemStack.damage(1, player, p -> p.sendToolBreakStatus(p.getActiveHand())); // Do not use posthit, it ONLY breaks the mainhand.
+                this.activeItemStack.damage(1, player, LivingEntity.getSlotForHand(player.getActiveHand())); // Do not use posthit, it ONLY breaks the mainhand.
             }
             else if (source.getSource() instanceof PersistentProjectileEntity persistentProjectile) {
                 double deflectionLevel = EnchantmentHelper.getLevel(DSEnchantments.DEFLECT, this.activeItemStack);
@@ -164,7 +166,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                             int knockbackAmount = EnchantmentHelper.getLevel(DSEnchantments.FORCEFUL, this.lungeWeapon);
 
                             if (this.lungeWeapon.getItem() instanceof DualWeapon dual) {
-                                damage += dual.getOffhandDamage() * 2f;
+                                damage += dual.getOffhandDamage(this.lungeWeapon) * 2f;
                             }
                             damage += 1.5f * EnchantmentHelper.getLevel(DSEnchantments.THRUST, this.lungeWeapon);
 
@@ -175,7 +177,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                             }
                             CPCEnchantmentHelper.postChargedHit(player, target, this.lungeWeapon);
                             if (this.lungeWeapon.equals(this.getMainHandStack())) this.lungeWeapon.postHit(target, player);
-                            else this.lungeWeapon.damage(1, player, p -> p.sendToolBreakStatus(Hand.OFF_HAND));
+                            else this.lungeWeapon.damage(1, player, LivingEntity.getSlotForHand(Hand.OFF_HAND));
                         }
 
                         this.lungeWeapon = ItemStack.EMPTY;

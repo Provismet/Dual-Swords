@@ -2,26 +2,21 @@ package com.provismet.dualswords.enchantments;
 
 import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
 
+import com.provismet.CombatPlusCore.utility.CPCItemTags;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EquipmentSlot;
 
 public class ForcefulEnchantment extends AbstractLungeTypeEnchantment {
     public ForcefulEnchantment () {
-        super(Rarity.RARE);
-    }
-
-    @Override
-    public int getMaxLevel () {
-        return 2;
-    }
-
-    @Override
-    public int getMinPower (int level) {
-        return level * 10;
-    }
-
-    @Override
-    public int getMaxPower (int level) {
-        return this.getMinPower(level) + 50;
+        super(Enchantment.properties(
+                CPCItemTags.DUAL_WEAPON,
+                3,
+                2,
+                Enchantment.leveledCost(5, 10),
+                Enchantment.leveledCost(20, 10),
+                4,
+                EquipmentSlot.OFFHAND
+        ));
     }
 
     @Override

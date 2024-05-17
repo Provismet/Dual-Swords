@@ -5,14 +5,17 @@ import com.provismet.dualswords.registry.DSEnchantments;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.RegistryWrapper;
+
+import java.util.concurrent.CompletableFuture;
 
 public class LanguageGenerator extends FabricLanguageProvider {
-    protected LanguageGenerator (FabricDataOutput dataOutput) {
-        super(dataOutput, "en_us");
+    protected LanguageGenerator (FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+        super(dataOutput, registryLookup);
     }
 
     @Override
-    public void generateTranslations (TranslationBuilder translationBuilder) {
+    public void generateTranslations (RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         LanguageGenerator.addEnchantment(translationBuilder, DSEnchantments.PARRY, "Parry", "Enables the ability to parry and riposte attacks.");
         LanguageGenerator.addEnchantment(translationBuilder, DSEnchantments.RIPOSTE, "Riposte", "Increases the damage of ripostes.");
         LanguageGenerator.addEnchantment(translationBuilder, DSEnchantments.DEFLECT, "Deflection", "Increases return speed of parried projectiles.");

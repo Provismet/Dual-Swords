@@ -33,7 +33,7 @@ public class DualSwordsMain implements ModInitializer {
         DSEnchantments.register();
         DSSettings.read();
 
-        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+        LootTableEvents.MODIFY.register((id, tableBuilder, source) -> {
             if (source.isBuiltin() || DSSettings.shouldOverrideDatapacks()) {
                 if (LootTables.STRONGHOLD_LIBRARY_CHEST.equals(id)) {
                     LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.333f));

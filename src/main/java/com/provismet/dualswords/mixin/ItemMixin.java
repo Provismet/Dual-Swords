@@ -1,25 +1,23 @@
 package com.provismet.dualswords.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import com.provismet.CombatPlusCore.utility.AttributeIdentifiers;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntity;
 import com.provismet.dualswords.registry.DSEnchantments;
 
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,11 +34,26 @@ import net.minecraft.world.World;
 
 @Mixin(Item.class)
 public abstract class ItemMixin {
-    @Unique
-    private Multimap<EntityAttribute, EntityAttributeModifier> dualswords_offHandAttributes = null;
-
     @Shadow
     public abstract int getMaxUseTime (ItemStack stack);
+
+    @Shadow @Final @Mutable
+    private ComponentMap components;
+
+    @Shadow public abstract ItemStack getDefaultStack();
+
+    @Unique
+    private boolean appliedOffhand = false;
+
+    @Inject(method="getComponents", at=@At("HEAD"))
+    private void placeOffhandAttributes (CallbackInfoReturnable<ComponentMap> cir) {
+        if (this instanceof DualWeapon dualWeapon && !this.appliedOffhand) {
+            this.appliedOffhand = true;
+            AttributeModifiersComponent attributes = this.components.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+            attributes = attributes.with(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, "Offhand Weapon Modifier", dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
+            this.components = ComponentMap.builder().addAll(this.components).add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes).build();
+        }
+    }
 
     @Inject(method="use", at=@At("HEAD"), cancellable=true)
     private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
@@ -97,20 +110,8 @@ public abstract class ItemMixin {
                 player.addVelocity(velocity);
                 ((IMixinLivingEntity)player).setLungeTicks(itemStack, 30);
                 player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
-                itemStack.damage(1, user, p -> p.sendToolBreakStatus(p.getActiveHand()));
+                itemStack.damage(1, user, LivingEntity.getSlotForHand(player.getActiveHand()));
             }
-        }
-    }
-
-    @Inject(method="getAttributeModifiers", at=@At("HEAD"), cancellable=true)
-    private void applyOffhandMods (EquipmentSlot slot, CallbackInfoReturnable<Multimap<EntityAttribute, EntityAttributeModifier>> cir) {
-        if (slot == EquipmentSlot.OFFHAND && (Item)(Object)this instanceof DualWeapon dualWeapon) {
-            if (this.dualswords_offHandAttributes == null) {
-                ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(DualSwordsMain.OFFHAND_ATTRIBUTE_ID, "Offhand Weapon modifier", (double)dualWeapon.getOffhandDamage(), EntityAttributeModifier.Operation.ADDITION));
-                this.dualswords_offHandAttributes = builder.build();
-            }
-            cir.setReturnValue(this.dualswords_offHandAttributes);
         }
     }
 }

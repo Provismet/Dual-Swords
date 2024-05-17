@@ -1,22 +1,19 @@
 package com.provismet.dualswords.enchantments;
 
+import com.provismet.CombatPlusCore.utility.CPCItemTags;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EquipmentSlot;
+
 public class ParryEnchantment extends AbstractParryTypeEnchantment {
     public ParryEnchantment () {
-        super(Rarity.UNCOMMON);
-    }
-
-    @Override
-    public int getMaxLevel () {
-        return 3;
-    }
-
-    @Override
-    public int getMinPower(int level) {
-        return 5 + 10 * (level - 1);
-    }
-
-    @Override
-    public int getMaxPower(int level) {
-        return this.getMinPower(level) + 50;
+        super(Enchantment.properties(
+                CPCItemTags.DUAL_WEAPON,
+                5,
+                3,
+                Enchantment.leveledCost(5, 5),
+                Enchantment.leveledCost(45, 5),
+                2,
+                EquipmentSlot.OFFHAND
+        ));
     }
 }
