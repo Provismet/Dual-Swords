@@ -9,13 +9,14 @@ import net.minecraft.entity.EquipmentSlot;
 public class ForcefulEnchantment extends AbstractLungeTypeEnchantment {
     public ForcefulEnchantment () {
         super(Enchantment.properties(
-                CPCItemTags.DUAL_WEAPON,
-                3,
-                2,
-                Enchantment.leveledCost(5, 10),
-                Enchantment.leveledCost(20, 10),
-                4,
-                EquipmentSlot.OFFHAND
+            CPCItemTags.OFFHAND_ENCHANTABLE,
+            CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE,
+            3,
+            2,
+            Enchantment.leveledCost(5, 10),
+            Enchantment.leveledCost(20, 10),
+            4,
+            EquipmentSlot.OFFHAND
         ));
     }
 

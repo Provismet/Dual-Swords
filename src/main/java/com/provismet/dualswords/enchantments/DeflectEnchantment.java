@@ -8,13 +8,14 @@ import net.minecraft.entity.EquipmentSlot;
 public class DeflectEnchantment extends AbstractParryTypeEnchantment {
     public DeflectEnchantment () {
         super(Enchantment.properties(
-                CPCItemTags.DUAL_WEAPON,
-                3,
-                3,
-                Enchantment.leveledCost(5, 5),
-                Enchantment.leveledCost(25, 5),
-                2,
-                EquipmentSlot.OFFHAND
+            CPCItemTags.OFFHAND_ENCHANTABLE,
+            CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE,
+            3,
+            3,
+            Enchantment.leveledCost(5, 5),
+            Enchantment.leveledCost(25, 5),
+            2,
+            EquipmentSlot.OFFHAND
         ));
     }
     

@@ -11,13 +11,14 @@ import net.minecraft.entity.LivingEntity;
 public class DaishoEnchantment extends OffHandEnchantment {
     public DaishoEnchantment () {
         super(Enchantment.properties(
-                CPCItemTags.DUAL_WEAPON,
-                2,
-                5,
-                Enchantment.leveledCost(20, 5),
-                Enchantment.leveledCost(30, 10),
-                8,
-                EquipmentSlot.OFFHAND
+            CPCItemTags.OFFHAND_ENCHANTABLE,
+            CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE,
+            2,
+            5,
+            Enchantment.leveledCost(20, 5),
+            Enchantment.leveledCost(30, 10),
+            8,
+            EquipmentSlot.OFFHAND
         ));
     }
 

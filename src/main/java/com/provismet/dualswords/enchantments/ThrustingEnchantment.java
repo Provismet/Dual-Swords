@@ -9,13 +9,14 @@ import net.minecraft.entity.EquipmentSlot;
 public class ThrustingEnchantment extends AbstractLungeTypeEnchantment {
     public ThrustingEnchantment () {
         super(Enchantment.properties(
-                CPCItemTags.DUAL_WEAPON,
-                3,
-                2,
-                Enchantment.leveledCost(5, 10),
-                Enchantment.leveledCost(50, 10),
-                2,
-                EquipmentSlot.OFFHAND
+            CPCItemTags.OFFHAND_ENCHANTABLE,
+            CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE,
+            3,
+            2,
+            Enchantment.leveledCost(5, 10),
+            Enchantment.leveledCost(50, 10),
+            2,
+            EquipmentSlot.OFFHAND
         ));
     }
 
