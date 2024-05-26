@@ -30,4 +30,9 @@ public class RiposteEnchantment extends AbstractParryTypeEnchantment {
             !(other instanceof DeflectEnchantment) &&
             !CPCEnchantmentHelper.isWeaponUtility(other);
     }
+
+    @Override
+    public boolean isTreasure () {
+        return true;
+    }
 }
