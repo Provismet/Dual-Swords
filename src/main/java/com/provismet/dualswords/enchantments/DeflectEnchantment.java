@@ -31,4 +31,9 @@ public class DeflectEnchantment extends AbstractParryTypeEnchantment {
     public int getMaxPower(int level) {
         return super.getMinPower(level) + 30;
     }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
+    }
 }

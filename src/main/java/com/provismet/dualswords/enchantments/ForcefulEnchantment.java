@@ -30,4 +30,9 @@ public class ForcefulEnchantment extends AbstractLungeTypeEnchantment {
             !(other instanceof ThrustingEnchantment) &&
             !CPCEnchantmentHelper.isWeaponUtility(other);
     }
+
+    @Override
+    public boolean isTreasure () {
+        return true;
+    }
 }
