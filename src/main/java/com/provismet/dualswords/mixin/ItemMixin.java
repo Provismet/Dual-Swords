@@ -1,11 +1,21 @@
 package com.provismet.dualswords.mixin;
 
-import com.provismet.CombatPlusCore.utility.AttributeIdentifiers;
+import com.mojang.datafixers.util.Pair;
+import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
+import com.provismet.CombatPlusCore.utility.item.AttributeIdentifiers;
+import com.provismet.dualswords.DualSwordsMain;
+import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
+import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
-import org.spongepowered.asm.mixin.*;
+import net.minecraft.server.world.ServerWorld;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,12 +45,14 @@ import net.minecraft.world.World;
 @Mixin(Item.class)
 public abstract class ItemMixin {
     @Shadow
-    public abstract int getMaxUseTime (ItemStack stack);
+    public abstract int getMaxUseTime (ItemStack stack, LivingEntity user);
 
     @Shadow @Final @Mutable
     private ComponentMap components;
 
     @Shadow public abstract ItemStack getDefaultStack();
+
+    @Shadow public abstract boolean isEnchantable (ItemStack stack);
 
     @Unique
     private boolean appliedOffhand = false;
@@ -50,7 +62,7 @@ public abstract class ItemMixin {
         if (this instanceof DualWeapon dualWeapon && !this.appliedOffhand) {
             this.appliedOffhand = true;
             AttributeModifiersComponent attributes = this.components.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-            attributes = attributes.with(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, "Offhand Weapon Modifier", dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
+            attributes = attributes.with(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
             this.components = ComponentMap.builder().addAll(this.components).add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes).build();
         }
     }
@@ -58,7 +70,7 @@ public abstract class ItemMixin {
     @Inject(method="use", at=@At("HEAD"), cancellable=true)
     private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         ItemStack itemStack = user.getStackInHand(hand);
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, itemStack) > 0 || EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack) > 0) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(itemStack, DSEnchantmentTags.MODIFIES_USE_ACTION)) {
             user.setCurrentHand(hand);
             cir.setReturnValue(TypedActionResult.consume(itemStack));
         }
@@ -66,15 +78,24 @@ public abstract class ItemMixin {
     
     @Inject(method="getUseAction", at=@At("HEAD"), cancellable=true)
     private void setParryAction (ItemStack itemStack, CallbackInfoReturnable<UseAction> cir) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, itemStack) > 0) cir.setReturnValue(UseAction.BLOCK);
-        else if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack) > 0) cir.setReturnValue(UseAction.SPEAR);
+        Pair<String, Integer> action = EnchantmentHelper.getEffectListAndLevel(itemStack, DSEnchantmentComponentTypes.USE_ACTION);
+        if (action != null) {
+            try {
+                cir.setReturnValue(UseAction.valueOf(action.getFirst()));
+            }
+            catch (IllegalArgumentException e) {
+                DualSwordsMain.LOGGER.error("Invalid use action attempted: ", e);
+            }
+        }
     }
 
     @Inject(method="getMaxUseTime", at=@At("HEAD"), cancellable=true)
-    private void setMaxParryTime (ItemStack itemStack, CallbackInfoReturnable<Integer> cir) {
-        int parryLevel = 0;
-        if ((parryLevel = EnchantmentHelper.getLevel(DSEnchantments.PARRY, itemStack)) > 0) cir.setReturnValue(10 * parryLevel);
-        else if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack) > 0) cir.setReturnValue(72000);
+    private void setMaxParryTime (ItemStack itemStack, LivingEntity user, CallbackInfoReturnable<Integer> cir) {
+        if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION)) {
+            if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION_DURATION))
+                cir.setReturnValue((int)CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.USE_ACTION_DURATION, user.getRandom(), itemStack, 0));
+            else cir.setReturnValue(72000);
+        }
     }
 
     @Inject(method="finishUsing", at=@At("HEAD"), cancellable=true)
@@ -98,7 +119,7 @@ public abstract class ItemMixin {
                     );
                 }
             }
-            else if ((lungeLevel = EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack)) > 0 && this.getMaxUseTime(itemStack) - remainingUseTicks > 8) {
+            else if ((lungeLevel = EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack)) > 0 && this.getMaxUseTime(itemStack, user) - remainingUseTicks > 8) {
                 if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem())) {
                     player.getItemCooldownManager().set(itemStack.getItem(), (int)((60 + 8 * EnchantmentHelper.getLevel(DSEnchantments.DAISHO, itemStack))));
                 }

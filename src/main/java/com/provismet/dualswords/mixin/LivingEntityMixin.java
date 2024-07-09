@@ -2,6 +2,9 @@ package com.provismet.dualswords.mixin;
 
 import java.util.List;
 
+import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
+import net.minecraft.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -67,6 +70,8 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
 
     @Shadow public abstract ItemStack getActiveItem();
 
+    @Shadow private @Nullable LivingEntity attacker;
+
     @Unique
     private boolean isParrying () {
         return EnchantmentHelper.getLevel(DSEnchantments.PARRY, this.activeItemStack) > 0;
@@ -88,7 +93,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     private void preventParry (DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValueZ() && isParrying()) {
             if (source.isIn(Tags.BYPASSES_PARRY)) cir.setReturnValue(false);
-            else if (!source.isIndirect() && source.getAttacker() instanceof LivingEntity living && living.disablesShield()) cir.setReturnValue(false);
+            else if (source.isDirect() && source.getAttacker() instanceof LivingEntity living && living.disablesShield()) cir.setReturnValue(false);
         }
     }
 
@@ -100,30 +105,29 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
 
     @Inject(method="damage", at=@At("TAIL"))
     private void combatCallbacks (DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(ordinal=0) boolean blocked) {
-        if (blocked && isParrying() && (LivingEntity)(Object)this instanceof PlayerEntity player) {
-            if (!source.isIndirect() && source.getAttacker() instanceof LivingEntity attacker) {
-                if (this.distanceTo(attacker) <= 4.5f) {
-                    float itemDamage = 0f;
-                    float enchantDamage = DSEnchantments.RIPOSTE.getDamage(EnchantmentHelper.getLevel(DSEnchantments.RIPOSTE, this.activeItemStack));
+        if (blocked && isParrying() && (LivingEntity)(Object)this instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld) {
+            if (source.isDirect() && source.getAttacker() instanceof LivingEntity target) {
+                if (this.distanceTo(target) <= 4.5f) {
+                    DamageSource riposte = DSDamageTypes.RIPOSTE.createDamageSource(player);
 
+                    float itemDamage = 0f;
                     if (this.activeItemStack.getItem() instanceof DualWeapon dual) {
                         itemDamage = dual.getOffhandDamage(this.activeItemStack) * 1.2f;
                     }
+                    float finalDamage = EnchantmentHelper.getDamage(serverWorld, this.activeItemStack, target, riposte, itemDamage);
 
-                    attacker.damage(DSDamageTypes.riposte(player), itemDamage + enchantDamage);
+                    target.damage(riposte, finalDamage);
                 }
 
                 if (this.activeItemStack.getItem() instanceof MeleeWeapon melee) {
-                    melee.postChargedHit(this.activeItemStack, player, attacker);
+                    melee.postChargedHit(this.activeItemStack, player, target);
                 }
-                CPCEnchantmentHelper.postChargedHit(player, attacker, this.activeItemStack);
+                CPCEnchantmentHelper.postChargedHit(serverWorld, player, target, LivingEntity.getSlotForHand(player.getActiveHand()));
                 this.activeItemStack.damage(1, player, LivingEntity.getSlotForHand(player.getActiveHand())); // Do not use posthit, it ONLY breaks the mainhand.
             }
             else if (source.getSource() instanceof PersistentProjectileEntity persistentProjectile) {
-                double deflectionLevel = EnchantmentHelper.getLevel(DSEnchantments.DEFLECT, this.activeItemStack);
-                if (deflectionLevel > 0) {
-                    persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel * 3.0)); // This gets multiplied by -0.1 in onEntityHit();
-                }
+                float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, serverWorld, this.activeItemStack, player, 1);
+                persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
             }
             player.getItemCooldownManager().set(this.activeItemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(DSEnchantments.DAISHO, this.activeItemStack));
             player.spawnSweepAttackParticles();
@@ -170,7 +174,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                             }
                             damage += 1.5f * EnchantmentHelper.getLevel(DSEnchantments.THRUST, this.lungeWeapon);
 
-                            target.damage(DSDamageTypes.lunge(player), damage);
+                            target.damage(DSDamageTypes.LUNGE.createDamageSource(player), damage);
                             if (knockbackAmount > 0) target.takeKnockback(knockbackAmount * 0.5, this.getX() - target.getX(), this.getZ() - target.getZ());
                             if (this.lungeWeapon.getItem() instanceof MeleeWeapon melee) {
                                 melee.postChargedHit(this.lungeWeapon, player, target);

@@ -1,29 +1,19 @@
 package com.provismet.dualswords;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
+import com.provismet.lilylib.container.DamageTypeContainer;
 import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.Registerable;
 
 public class DSDamageTypes {
-    private static final RegistryKey<DamageType> RIPOSTE = createDamageType("riposte");
-    private static final RegistryKey<DamageType> LUNGE = createDamageType("lunge");
+    public static final DamageTypeContainer RIPOSTE = createDamageType("riposte");
+    public static final DamageTypeContainer LUNGE = createDamageType("lunge");
 
-    public static DamageSource riposte (Entity attacker) {
-        return DSDamageTypes.createSource(attacker.getDamageSources(), RIPOSTE, attacker);
+    private static DamageTypeContainer createDamageType (String name) {
+        return new DamageTypeContainer(DualSwordsMain.identifier(name), new DamageType(name, 0.1f));
     }
 
-    public static DamageSource lunge (Entity attacker) {
-        return DSDamageTypes.createSource(attacker.getDamageSources(), LUNGE, attacker);
-    }
-
-    private static DamageSource createSource (DamageSources sources, RegistryKey<DamageType> damageType, Entity attacker) {
-        return sources.create(damageType, attacker);
-    }
-
-    private static RegistryKey<DamageType> createDamageType (String name) {
-        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, DualSwordsMain.identifier(name));
+    public static void bootstrap (Registerable<DamageType> registerable) {
+        registerable.register(RIPOSTE.getKey(), RIPOSTE.getDamageType());
+        registerable.register(LUNGE.getKey(), LUNGE.getDamageType());
     }
 }
