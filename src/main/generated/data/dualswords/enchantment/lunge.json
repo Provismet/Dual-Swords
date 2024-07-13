@@ -1,0 +1,47 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.dualswords.lunge"
+  },
+  "effects": {
+    "dualswords:on_stopped_using": [
+      {
+        "effect": {
+          "type": "dualswords:apply_to_user",
+          "effect": {
+            "type": "combat-plus:code_execution_single_entity",
+            "function": "dualswords:lunge"
+          },
+          "minimum_charging_ticks": 9.0
+        }
+      },
+      {
+        "effect": {
+          "type": "dualswords:apply_to_user",
+          "effect": {
+            "type": "dualswords:modify_cooldown",
+            "value": 60.0
+          },
+          "minimum_charging_ticks": 9.0
+        }
+      }
+    ],
+    "dualswords:use_action": "SPEAR"
+  },
+  "exclusive_set": "#dualswords:exclusive_set/lunge",
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 5
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 5
+  },
+  "primary_items": "#combat-plus:enchantable/offhand_primary",
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#combat-plus:enchantable/offhand",
+  "weight": 5
+}

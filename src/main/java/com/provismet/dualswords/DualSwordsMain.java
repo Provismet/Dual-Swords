@@ -1,8 +1,11 @@
 package com.provismet.dualswords;
 
-import java.util.UUID;
-
+import com.provismet.CombatPlusCore.loot.functions.EnchantRandomlyFromKeyLootFunction;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
+import com.provismet.dualswords.registry.DSEnchantmentEntityEffects;
+import com.provismet.dualswords.registry.DSLambdas;
+import com.provismet.dualswords.registry.OnStoppedUsingEffects;
+import com.provismet.dualswords.util.registry.DSRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +18,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.function.EnchantRandomlyLootFunction;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.util.Identifier;
 
@@ -29,29 +31,33 @@ public class DualSwordsMain implements ModInitializer {
 
     @Override
     public void onInitialize () {
+        DSRegistries.init();
         DSEnchantmentComponentTypes.init();
+        DSEnchantmentEntityEffects.register();
+        OnStoppedUsingEffects.register();
+        DSLambdas.register();
         DSSettings.read();
 
         LootTableEvents.MODIFY.register((id, tableBuilder, source) -> {
             if (source.isBuiltin() || DSSettings.shouldOverrideDatapacks()) {
                 if (LootTables.STRONGHOLD_LIBRARY_CHEST.equals(id)) {
                     LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.333f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(DSEnchantments.DAISHO)));
+                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
                     tableBuilder.pool(lootPool);
                 }
                 else if (LootTables.WOODLAND_MANSION_CHEST.equals(id)) {
                     LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.2f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(DSEnchantments.DAISHO)));
+                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
                     tableBuilder.pool(lootPool);
                 }
                 else if (LootTables.PILLAGER_OUTPOST_CHEST.equals(id)) {
                     LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.15f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(DSEnchantments.DAISHO)));
+                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
                     tableBuilder.pool(lootPool);
                 }
                 else if (LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY.equals(id)) {
                     LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.05f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(new EnchantRandomlyLootFunction.Builder().add(DSEnchantments.DAISHO)));
+                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
                     tableBuilder.pool(lootPool);
                 }
             }

@@ -1,15 +1,20 @@
 package com.provismet.dualswords.mixin;
 
 import com.mojang.datafixers.util.Pair;
+import com.provismet.CombatPlusCore.enchantment.loot.context.CPCLootContext;
 import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
 import com.provismet.CombatPlusCore.utility.item.AttributeIdentifiers;
 import com.provismet.dualswords.DualSwordsMain;
+import com.provismet.dualswords.enchantment.component.EnchantmentStoppedUsingEffect;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
-import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.enchantment.EnchantmentEffectContext;
+import net.minecraft.enchantment.effect.EnchantmentEffectEntry;
+import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,40 +27,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.dualswords.interfaceMixin.IMixinLivingEntity;
-import com.provismet.dualswords.registry.DSEnchantments;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(Item.class)
 public abstract class ItemMixin {
-    @Shadow
-    public abstract int getMaxUseTime (ItemStack stack, LivingEntity user);
-
-    @Shadow @Final @Mutable
-    private ComponentMap components;
+    @Shadow @Final @Mutable private ComponentMap components;
 
     @Shadow public abstract ItemStack getDefaultStack();
 
-    @Shadow public abstract boolean isEnchantable (ItemStack stack);
-
-    @Unique
-    private boolean appliedOffhand = false;
+    @Unique private boolean appliedOffhand = false;
 
     @Inject(method="getComponents", at=@At("HEAD"))
     private void placeOffhandAttributes (CallbackInfoReturnable<ComponentMap> cir) {
@@ -70,7 +61,7 @@ public abstract class ItemMixin {
     @Inject(method="use", at=@At("HEAD"), cancellable=true)
     private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         ItemStack itemStack = user.getStackInHand(hand);
-        if (EnchantmentHelper.hasAnyEnchantmentsIn(itemStack, DSEnchantmentTags.MODIFIES_USE_ACTION)) {
+        if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION)) {
             user.setCurrentHand(hand);
             cir.setReturnValue(TypedActionResult.consume(itemStack));
         }
@@ -98,40 +89,40 @@ public abstract class ItemMixin {
         }
     }
 
-    @Inject(method="finishUsing", at=@At("HEAD"), cancellable=true)
+    @Inject(method="finishUsing", at=@At("HEAD"))
     private void finishParrying (ItemStack itemStack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, itemStack) > 0) {
-            if (user instanceof PlayerEntity player) {
-                player.getItemCooldownManager().set(itemStack.getItem(), 30 + 8 * EnchantmentHelper.getLevel(DSEnchantments.DAISHO, itemStack));
+        if (world instanceof ServerWorld serverWorld) {
+            EquipmentSlot slot;
+            if (ItemStack.areEqual(itemStack, user.getMainHandStack())) slot = EquipmentSlot.MAINHAND;
+            else if (ItemStack.areEqual(itemStack, user.getOffHandStack())) slot = EquipmentSlot.OFFHAND;
+            else slot = null;
+
+            if (slot != null) {
+                CPCEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
+                    for (EnchantmentEffectEntry<EnchantmentEntityEffect> effect : enchantment.value().getEffect(DSEnchantmentComponentTypes.ON_FINISHED_USING)) {
+                        if (effect.test(CPCLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
+                            effect.effect().apply(serverWorld, level, new EnchantmentEffectContext(itemStack, slot, user), user, user.getPos());
+                    }
+                }, user, slot);
             }
         }
     }
 
     @Inject(method="onStoppedUsing", at=@At("HEAD"))
     private void onStoppedParrying (ItemStack itemStack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info) {
-        if (user instanceof PlayerEntity player) {
-            int lungeLevel = 0;
-            if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, itemStack) > 0) {
-                if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem())) {
-                    player.getItemCooldownManager().set(
-                        itemStack.getItem(),
-                        (int)((30 + 8 * EnchantmentHelper.getLevel(DSEnchantments.DAISHO, itemStack)) * (1f - ((float)remainingUseTicks / (float)getMaxUseTime(itemStack))))
-                    );
-                }
-            }
-            else if ((lungeLevel = EnchantmentHelper.getLevel(DSEnchantments.LUNGE, itemStack)) > 0 && this.getMaxUseTime(itemStack, user) - remainingUseTicks > 8) {
-                if (!player.getItemCooldownManager().isCoolingDown(itemStack.getItem())) {
-                    player.getItemCooldownManager().set(itemStack.getItem(), (int)((60 + 8 * EnchantmentHelper.getLevel(DSEnchantments.DAISHO, itemStack))));
-                }
-                if (player.isOnGround()) player.move(MovementType.SELF, new Vec3d(0.0, 0.5, 0.0));
-                
-                double dx = -MathHelper.sin(user.getHeadYaw() / MathHelper.DEGREES_PER_RADIAN);
-                double dz = MathHelper.cos(user.getHeadYaw() / MathHelper.DEGREES_PER_RADIAN);
-                Vec3d velocity = new Vec3d(dx, 0.0, dz).multiply(0.5 * lungeLevel);
-                player.addVelocity(velocity);
-                ((IMixinLivingEntity)player).setLungeTicks(itemStack, 30);
-                player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
-                itemStack.damage(1, user, LivingEntity.getSlotForHand(player.getActiveHand()));
+        if (world instanceof ServerWorld serverWorld) {
+            EquipmentSlot slot;
+            if (ItemStack.areEqual(itemStack, user.getMainHandStack())) slot = EquipmentSlot.MAINHAND;
+            else if (ItemStack.areEqual(itemStack, user.getOffHandStack())) slot = EquipmentSlot.OFFHAND;
+            else slot = null;
+
+            if (slot != null) {
+                CPCEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
+                    for (EnchantmentEffectEntry<EnchantmentStoppedUsingEffect> effect : enchantment.value().getEffect(DSEnchantmentComponentTypes.ON_STOPPED_USING)) {
+                        if (effect.test(CPCLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
+                            effect.effect().onStoppedUsing(serverWorld, level, new EnchantmentEffectContext(itemStack, slot, user), user, remainingUseTicks);
+                    }
+                }, user, slot);
             }
         }
     }

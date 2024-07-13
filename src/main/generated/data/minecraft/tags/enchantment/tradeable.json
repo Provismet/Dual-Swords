@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#dualswords:parry",
+      "required": false
+    },
+    {
+      "id": "#dualswords:lunge",
+      "required": false
+    }
+  ]
+}

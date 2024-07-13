@@ -1,0 +1,10 @@
+{
+  "values": [
+    "dualswords:riposte",
+    "dualswords:deflect",
+    {
+      "id": "#combat-plus:exclusive_set/offhand",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "values": [
+    "dualswords:riposte",
+    "dualswords:thrusting",
+    "dualswords:daisho",
+    {
+      "id": "#combat-plus:exclusive_set/offhand",
+      "required": false
+    }
+  ]
+}

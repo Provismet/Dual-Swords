@@ -1,0 +1,47 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.dualswords.thrusting"
+  },
+  "effects": {
+    "minecraft:damage": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 1.5,
+            "per_level_above_first": 1.5
+          }
+        },
+        "requirements": {
+          "condition": "minecraft:damage_source_properties",
+          "predicate": {
+            "tags": [
+              {
+                "expected": true,
+                "id": "dualswords:is_offhanded"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#dualswords:exclusive_set/lunge_bonus",
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 10
+  },
+  "max_level": 2,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#combat-plus:enchantable/offhand_primary",
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#combat-plus:enchantable/offhand",
+  "weight": 3
+}

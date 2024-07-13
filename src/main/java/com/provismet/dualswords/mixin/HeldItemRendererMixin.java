@@ -1,5 +1,6 @@
 package com.provismet.dualswords.mixin;
 
+import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,7 +46,7 @@ public abstract class HeldItemRendererMixin {
             target="Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
             ordinal=2))
     private void animateParry (HeldItemRenderer thisRenderer, MatrixStack matrices1, Arm arm, float equipProgress1, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, item) > 0) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER)) {
             applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
             applyParryOffset(matrices1, tickDelta, arm, item, equipProgress1);
         }
@@ -61,7 +62,7 @@ public abstract class HeldItemRendererMixin {
             ordinal=4,
             shift=At.Shift.AFTER))
     private void animateLunge (AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE, item) > 0) {
+        if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE.getEntryOrThrow(player.getWorld().getRegistryManager()), item) > 0) {
             matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(75f * (1 - equipProgress)));
             matrices.translate(0f, -0.75f, 0.75f);
         }
@@ -72,13 +73,13 @@ public abstract class HeldItemRendererMixin {
             target="Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
             ordinal=8))
     private void applyUpwardsEquip (HeldItemRenderer thisRenderer, MatrixStack matrices1, Arm arm, float equipProgress1, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, item) > 0 && swingProgress == 0) applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
         else this.applyEquipOffset(matrices1, arm, equipProgress1);
     }
 
     @Inject(method="renderFirstPersonItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/util/math/MatrixStack;push()V", shift=At.Shift.AFTER))
     private void flipBlade (AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.PARRY, item) > 0 && swingProgress == 0) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) {
             Arm arm = hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
             float sideMultiplier = arm == Arm.RIGHT ? -1f : 1f;
             matrices.translate(0.1f * sideMultiplier, -0.8f, -1.25f);

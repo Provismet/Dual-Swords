@@ -1,0 +1,10 @@
+{
+  "values": [
+    "dualswords:thrusting",
+    "dualswords:forceful",
+    {
+      "id": "#combat-plus:exclusive_set/offhand",
+      "required": false
+    }
+  ]
+}

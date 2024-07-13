@@ -1,17 +1,19 @@
 package com.provismet.dualswords.util;
 
-import com.mojang.datafixers.util.Pair;
+import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-
-import java.util.Objects;
+import net.minecraft.server.world.ServerWorld;
 
 public abstract class DSEnchantmentHelper {
-    public static int getUseActionLevel (ItemStack itemStack, String useAction) {
-        Pair<String, Integer> enchantment = EnchantmentHelper.getEffectListAndLevel(itemStack, DSEnchantmentComponentTypes.USE_ACTION);
-        if (enchantment == null) return 0;
-        else if (!Objects.equals(enchantment.getFirst(), useAction)) return 0;
-        return enchantment.getSecond();
+    public static int modifyEnchantedCooldown (ServerWorld world, PlayerEntity player, int base) {
+        float cooldown = base;
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack item = player.getEquippedStack(slot);
+            cooldown = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.MODIFY_COOLDOWN, world, item, player, cooldown);
+        }
+        return (int)cooldown;
     }
 }

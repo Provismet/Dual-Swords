@@ -1,0 +1,36 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.dualswords.deflect"
+  },
+  "effects": {
+    "dualswords:projectile_deflection_speed": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 3.0,
+            "per_level_above_first": 3.0
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#dualswords:exclusive_set/parry_bonus",
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 5
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 5
+  },
+  "primary_items": "#combat-plus:enchantable/offhand_primary",
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#combat-plus:enchantable/offhand",
+  "weight": 3
+}

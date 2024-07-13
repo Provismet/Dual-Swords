@@ -6,10 +6,12 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 
 public abstract class DSEnchantmentTags {
-    public static final TagKey<Enchantment> MODIFIES_USE_ACTION = DSEnchantmentTags.of("modifies_use_action");
     public static final TagKey<Enchantment> PARRY = DSEnchantmentTags.of("parry");
     public static final TagKey<Enchantment> LUNGE = DSEnchantmentTags.of("lunge");
+
+    // Rendering
     public static final TagKey<Enchantment> REVERSE_RENDER = DSEnchantmentTags.of("render_upside-down");
+    public static final TagKey<Enchantment> FLIPPED_SPEAR = DSEnchantmentTags.of("flipped_spear");
 
     // Exclusive Set
     public static final TagKey<Enchantment> PARRY_EXCLUSIVE = DSEnchantmentTags.of("exclusive_set/parry");

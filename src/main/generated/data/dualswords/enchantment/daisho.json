@@ -1,0 +1,54 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.dualswords.daisho"
+  },
+  "effects": {
+    "combat-plus:bonus_damage": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 0.8,
+            "per_level_above_first": 0.8
+          }
+        },
+        "requirements": {
+          "applied_condition": {
+            "condition": "combat-plus:code_execution_single_entity_condition",
+            "function": "dualswords:dual_wielder"
+          },
+          "condition": "combat-plus:apply_to_attacker"
+        }
+      }
+    ],
+    "dualswords:modify_cooldown": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 8.0,
+            "per_level_above_first": 8.0
+          }
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 30,
+    "per_level_above_first": 10
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 20,
+    "per_level_above_first": 5
+  },
+  "primary_items": "#combat-plus:enchantable/offhand_primary",
+  "slots": [
+    "offhand"
+  ],
+  "supported_items": "#combat-plus:enchantable/offhand",
+  "weight": 2
+}

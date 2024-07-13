@@ -1,16 +1,18 @@
 {
-	"required": true,
-	"package": "com.provismet.dualswords.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ItemMixin",
-		"LivingEntityMixin"
-	],
-	"client": [
-		"HeldItemRendererMixin",
-		"HeldItemFeatureRendererMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.provismet.dualswords.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "DamageTypesMixin",
+    "EnchantmentsMixin",
+    "ItemMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [
+    "HeldItemFeatureRendererMixin",
+    "HeldItemRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

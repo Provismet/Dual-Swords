@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#dualswords:lunge",
+      "required": false
+    },
+    {
+      "id": "#combat-plus:exclusive_set/offhand",
+      "required": false
+    }
+  ]
+}
