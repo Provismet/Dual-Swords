@@ -135,17 +135,14 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 this.lungeWeapon = ItemStack.EMPTY;
             }
             else if (this.getWorld() instanceof ServerWorld serverWorld) {
-                for (int i = 0; i < 2; ++i) {
-                    double deltaX = this.random.nextDouble() * 2.0 * MathHelper.PI;
-                    double deltaZ = this.random.nextDouble() * 2.0 * MathHelper.PI;
-    
-                    float angle = this.random.nextFloat() * MathHelper.PI * 2f;
-                    double x = -MathHelper.sin(angle) * 0.5 + this.getX();
-                    double y = this.random.nextDouble() - 0.5 + this.getBodyY(0.5);
-                    double z = MathHelper.cos(angle) * 0.5 + this.getZ();
+                double deltaX = this.random.nextDouble() * 0.5 * MathHelper.PI;
+                double deltaZ = this.random.nextDouble() * 0.5 * MathHelper.PI;
 
-                    serverWorld.spawnParticles(ParticleTypes.SWEEP_ATTACK, x, y, z, 1, deltaX, 0.0, deltaZ, 0.0);
-                }
+                float angle = this.random.nextFloat() * MathHelper.PI * 2f;
+                double x = -MathHelper.sin(angle) * 0.15 + this.getX();
+                double y = this.random.nextDouble() - 0.5 + this.getBodyY(0.5);
+                double z = MathHelper.cos(angle) * 0.15 + this.getZ();
+                serverWorld.spawnParticles(ParticleTypes.SWEEP_ATTACK, x, y, z, 3, deltaX, 0.0, deltaZ, 0.0);
 
                 Vec3d attackPos = this.getPos().add(this.getVelocity().normalize().multiply(3));
                 Box hitbox = Box.of(attackPos, 2.0, 0.5, 2.0).union(this.getBoundingBox().expand(1.0, 0.5, 1.0));
