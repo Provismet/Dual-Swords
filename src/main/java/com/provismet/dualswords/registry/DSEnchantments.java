@@ -1,7 +1,7 @@
 package com.provismet.dualswords.registry;
 
 import com.provismet.CombatPlusCore.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.loot.condition.singleEntity.ApplyToAttacker;
+import com.provismet.CombatPlusCore.enchantment.loot.condition.singleEntity.ApplyToAttackerCondition;
 import com.provismet.CombatPlusCore.enchantment.loot.condition.singleEntity.SingleEntityLambdaCondition;
 import com.provismet.CombatPlusCore.registries.CPCEnchantmentComponentTypes;
 import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
@@ -217,7 +217,7 @@ public class DSEnchantments {
             new AddEnchantmentEffect(
                 EnchantmentLevelBasedValue.linear(0.8f)
             ),
-            ApplyToAttacker.builder(
+            ApplyToAttackerCondition.builder(
                 SingleEntityLambdaCondition.builder(DualSwordsMain.identifier("dual_wielder"))
             )
         ).addEffect(

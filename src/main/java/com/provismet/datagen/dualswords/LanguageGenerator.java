@@ -36,7 +36,7 @@ public class LanguageGenerator extends FabricLanguageProvider {
     }
 
     private static void addDeathMessage (TranslationBuilder translationBuilder, DamageTypeContainer container, String message) {
-        translationBuilder.add(container.getDeathTranslationKey(), "%1$s " + message + " %2$s");
-        translationBuilder.add(container.getDeathTranslationKey() + ".item", "%1$s " + message + " %2$s using %3$s");
+        translationBuilder.add(container.getTranslationKey(), "%1$s " + message + " %2$s");
+        translationBuilder.add(container.getTranslationKey("item"), "%1$s " + message + " %2$s using %3$s");
     }
 }
