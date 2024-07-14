@@ -27,7 +27,7 @@ public abstract class DSLambdas {
             Vec3d velocity = new Vec3d(dx, 0.0, dz).multiply(0.5 * level);
             player.addVelocity(velocity);
             player.velocityModified = true;
-            ((IMixinLivingEntity)player).setLungeTicks(context.stack(), context.slot(), 30);
+            ((IMixinLivingEntity)player).dual_Swords$setLungeTicks(context.stack(), context.slot(), 30);
             player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
             context.stack().damage(1, player, LivingEntity.getSlotForHand(player.getActiveHand()));
         });

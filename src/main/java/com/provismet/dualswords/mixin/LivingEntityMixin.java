@@ -67,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     }
 
     @Override
-    public void setLungeTicks (ItemStack stack, EquipmentSlot slot, int ticks) {
+    public void dual_Swords$setLungeTicks (ItemStack stack, EquipmentSlot slot, int ticks) {
         this.lungeTicks = ticks;
         this.lungeWeapon = stack;
         if (this.lungeWeapon == null || this.lungeWeapon.isEmpty()) this.lungeSlot = null;
