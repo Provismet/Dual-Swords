@@ -101,16 +101,4 @@ public abstract class ItemMixin {
             }
         }
     }
-
-    @Inject(method="getAttributeModifiers", at=@At("HEAD"), cancellable=true)
-    private void applyOffhandMods (EquipmentSlot slot, CallbackInfoReturnable<Multimap<EntityAttribute, EntityAttributeModifier>> cir) {
-        if (slot == EquipmentSlot.OFFHAND && (Item)(Object)this instanceof DualWeapon dualWeapon) {
-            if (this.dualswords_offHandAttributes == null) {
-                ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-                builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(DualSwordsMain.OFFHAND_ATTRIBUTE_ID, "Offhand Weapon modifier", (double)dualWeapon.getOffhandDamage(), EntityAttributeModifier.Operation.ADDITION));
-                this.dualswords_offHandAttributes = builder.build();
-            }
-            cir.setReturnValue(this.dualswords_offHandAttributes);
-        }
-    }
 }
