@@ -3,14 +3,9 @@ package com.provismet.dualswords.mixin;
 import com.mojang.datafixers.util.Pair;
 import com.provismet.CombatPlusCore.enchantment.loot.context.CPCLootContext;
 import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
-import com.provismet.CombatPlusCore.utility.item.AttributeIdentifiers;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.enchantment.component.EnchantmentStoppedUsingEffect;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.enchantment.EnchantmentEffectContext;
 import net.minecraft.enchantment.effect.EnchantmentEffectEntry;
 import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
@@ -18,21 +13,13 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -41,22 +28,6 @@ import net.minecraft.world.World;
 
 @Mixin(Item.class)
 public abstract class ItemMixin {
-    @Shadow @Final @Mutable private ComponentMap components;
-
-    @Shadow public abstract ItemStack getDefaultStack();
-
-    @Unique private boolean appliedOffhand = false;
-
-    @Inject(method="getComponents", at=@At("HEAD"))
-    private void placeOffhandAttributes (CallbackInfoReturnable<ComponentMap> cir) {
-        if (this instanceof DualWeapon dualWeapon && !this.appliedOffhand) {
-            this.appliedOffhand = true;
-            AttributeModifiersComponent attributes = this.components.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-            attributes = attributes.with(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
-            this.components = ComponentMap.builder().addAll(this.components).add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes).build();
-        }
-    }
-
     @Inject(method="use", at=@At("HEAD"), cancellable=true)
     private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = user.getStackInHand(hand);

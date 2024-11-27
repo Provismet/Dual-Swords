@@ -5,6 +5,7 @@ import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
 import com.provismet.dualswords.registry.DSEnchantmentEntityEffects;
 import com.provismet.dualswords.registry.DSLambdas;
 import com.provismet.dualswords.registry.OnStoppedUsingEffects;
+import com.provismet.dualswords.util.event.ItemEvents;
 import com.provismet.dualswords.util.registry.DSRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class DualSwordsMain implements ModInitializer {
         OnStoppedUsingEffects.register();
         DSLambdas.register();
         DSSettings.read();
+        ItemEvents.RegisterComponentPhase();
 
         LootTableEvents.MODIFY.register((id, tableBuilder, source) -> {
             if (source.isBuiltin() || DSSettings.shouldOverrideDatapacks()) {
