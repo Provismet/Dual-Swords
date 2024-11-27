@@ -122,6 +122,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
             }
             player.spawnSweepAttackParticles();
+            this.itemUseTimeLeft = 0;
             player.stopUsingItem();
         }
     }
