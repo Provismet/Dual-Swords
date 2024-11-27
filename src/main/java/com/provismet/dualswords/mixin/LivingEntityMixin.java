@@ -130,11 +130,9 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, serverWorld, this.activeItemStack, player, 1);
                 persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
             }
-
-            ItemStack tempStack = this.activeItemStack;
             player.spawnSweepAttackParticles();
+            this.itemUseTimeLeft = 0;
             player.stopUsingItem();
-            player.getItemCooldownManager().set(tempStack, 30);
         }
     }
 
