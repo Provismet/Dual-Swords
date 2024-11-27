@@ -10,9 +10,8 @@ import net.minecraft.server.world.ServerWorld;
 import java.util.function.Function;
 
 public interface EnchantmentStoppedUsingEffect {
-    public static final Codec<EnchantmentStoppedUsingEffect> CODEC = DSRegistries.ENCHANTMENT_STOPPED_USING_EFFECT_TYPE.getCodec().dispatch(EnchantmentStoppedUsingEffect::getCodec, Function.identity());
+    Codec<EnchantmentStoppedUsingEffect> CODEC = DSRegistries.ENCHANTMENT_STOPPED_USING_EFFECT_TYPE.getCodec().dispatch(EnchantmentStoppedUsingEffect::getCodec, Function.identity());
 
-    public void onStoppedUsing (ServerWorld world, int level, EnchantmentEffectContext context, LivingEntity user, int remainingTicks);
-
-    public MapCodec<? extends EnchantmentStoppedUsingEffect> getCodec ();
+    void onStoppedUsing (ServerWorld world, int level, EnchantmentEffectContext context, LivingEntity user, int remainingTicks);
+    MapCodec<? extends EnchantmentStoppedUsingEffect> getCodec ();
 }

@@ -19,7 +19,7 @@ public record CooldownEffect (EnchantmentLevelBasedValue value) implements Encha
         if (!(user instanceof PlayerEntity player)) return;
 
         int cooldown = DSEnchantmentHelper.modifyEnchantedCooldown(world, player, (int)this.value.getValue(level));
-        player.getItemCooldownManager().set(context.stack().getItem(), cooldown);
+        player.getItemCooldownManager().set(context.stack(), cooldown);
     }
 
     @Override

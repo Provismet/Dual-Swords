@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Objects;
 
 import com.mojang.datafixers.util.Pair;
+import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.UseAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -58,11 +59,11 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     @Shadow protected int itemUseTimeLeft;
 
     @Shadow public abstract double getAttributeValue (RegistryEntry<EntityAttribute> attribute);
-    @Shadow public abstract boolean damage (DamageSource source, float amount);
+    @Shadow public abstract boolean damage (ServerWorld world, DamageSource source, float amount);
 
     @Unique
     private boolean isParrying () {
-        Pair<String, Integer> useAction = EnchantmentHelper.getEffectListAndLevel(this.activeItemStack, DSEnchantmentComponentTypes.USE_ACTION);
+        Pair<String, Integer> useAction = EnchantmentHelper.getHighestLevelEffect(this.activeItemStack, DSEnchantmentComponentTypes.USE_ACTION);
         return useAction != null && Objects.equals(useAction.getFirst(), UseAction.BLOCK.name());
     }
 
@@ -75,16 +76,24 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     }
 
     // Shields take 5 ticks to become active, swords should be faster than that.
-    @Inject(method="isBlocking", at=@At(value="INVOKE", target="Lnet/minecraft/item/Item;getMaxUseTime(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/LivingEntity;)I", shift=At.Shift.BEFORE), cancellable=true)
-    private void quickParry (CallbackInfoReturnable<Boolean> cir) {
-        if (isParrying()) cir.setReturnValue(this.activeItemStack.getMaxUseTime((LivingEntity)(Object)this) - this.itemUseTimeLeft >= 2);
+    @Inject(method="getBlockingItem", at=@At(value="INVOKE", target="Lnet/minecraft/item/Item;getMaxUseTime(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/LivingEntity;)I", shift=At.Shift.BEFORE), cancellable=true)
+    private void quickParry (CallbackInfoReturnable<ItemStack> cir) {
+        if (isParrying()) {
+            cir.setReturnValue(this.activeItemStack.getMaxUseTime((LivingEntity)(Object)this) - this.itemUseTimeLeft >= 2 ? this.activeItemStack : null);
+        }
     }
-    
-    @Inject(method="blockedByShield", at=@At("RETURN"), cancellable=true)
-    private void preventParry (DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValueZ() && isParrying()) {
-            if (source.isIn(DSDamageTypeTags.BYPASSES_PARRY)) cir.setReturnValue(false);
-            else if (source.isDirect() && source.getAttacker() instanceof LivingEntity living && living.disablesShield()) cir.setReturnValue(false);
+
+    @Inject(method="blockedByShield", at=@At("TAIL"), cancellable=true)
+    private void allowParry (DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        boolean cantParryAttacker = source.isDirect() && source.getAttacker() instanceof LivingEntity living && living.disablesShield();
+        if (!cir.getReturnValueZ() && isParrying() && !source.isIn(DSDamageTypeTags.BYPASSES_PARRY) && !cantParryAttacker) {
+            Vec3d vec3d = source.getPosition();
+            if (vec3d != null) {
+                Vec3d vec3d2 = this.getRotationVector(0f, this.getHeadYaw());
+                Vec3d vec3d3 = vec3d.relativize(this.getPos());
+                vec3d3 = new Vec3d(vec3d3.x, 0.0, vec3d3.z).normalize();
+                cir.setReturnValue(vec3d3.dotProduct(vec3d2) < 0f);
+            }
         }
     }
 
@@ -95,8 +104,8 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
     }
 
     @Inject(method="damage", at=@At("TAIL"))
-    private void combatCallbacks (DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(ordinal=0) boolean blocked) {
-        if (blocked && isParrying() && (LivingEntity)(Object)this instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld) {
+    private void combatCallbacks (ServerWorld serverWorld, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Local(ordinal=0) boolean blocked) {
+        if (blocked && isParrying() && (LivingEntity)(Object)this instanceof PlayerEntity player) {
             if (source.isDirect() && source.getAttacker() instanceof LivingEntity target) {
                 if (this.distanceTo(target) <= 4.5f) {
                     DamageSource riposte = DSDamageTypes.RIPOSTE.createDamageSource(player);
@@ -106,8 +115,8 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                         itemDamage = dual.getOffhandDamage(this.activeItemStack) * 1.2f;
                     }
                     float finalDamage = CPCEnchantmentHelper.getDamage(serverWorld, this.activeItemStack, target, riposte, itemDamage);
-                    target.damage(riposte, finalDamage);
-                    float knockback = EnchantmentHelper.modifyKnockback(serverWorld, this.activeItemStack, target, riposte, (float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_KNOCKBACK));
+                    target.damage(serverWorld, riposte, finalDamage);
+                    float knockback = EnchantmentHelper.modifyKnockback(serverWorld, this.activeItemStack, target, riposte, (float)this.getAttributeValue(EntityAttributes.ATTACK_KNOCKBACK));
                     target.takeKnockback(knockback * 0.5, MathHelper.sin(this.getYaw() * ((float)Math.PI / 180)), -MathHelper.cos(this.getYaw() * ((float)Math.PI / 180)));
                 }
 
@@ -121,8 +130,11 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, serverWorld, this.activeItemStack, player, 1);
                 persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
             }
+
+            ItemStack tempStack = this.activeItemStack;
             player.spawnSweepAttackParticles();
             player.stopUsingItem();
+            player.getItemCooldownManager().set(tempStack, 30);
         }
     }
 
@@ -162,8 +174,8 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
 
                             DamageSource lunge = DSDamageTypes.LUNGE.createDamageSource(player);
                             damage = CPCEnchantmentHelper.getDamage(serverWorld, this.lungeWeapon, target, lunge, damage);
-                            float knockbackAmount = EnchantmentHelper.modifyKnockback(serverWorld, this.lungeWeapon, target, lunge, (float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_KNOCKBACK));
-                            target.damage(lunge, damage);
+                            float knockbackAmount = EnchantmentHelper.modifyKnockback(serverWorld, this.lungeWeapon, target, lunge, (float)this.getAttributeValue(EntityAttributes.ATTACK_KNOCKBACK));
+                            target.damage(serverWorld, lunge, damage);
                             if (knockbackAmount > 0) target.takeKnockback(knockbackAmount * 0.5, this.getX() - target.getX(), this.getZ() - target.getZ());
 
                             if (this.lungeWeapon.getItem() instanceof MeleeWeapon melee) {

@@ -20,7 +20,7 @@ public record ReverseScalingCooldownEffect (EnchantmentLevelBasedValue value) im
         float usage = 1f - ((float)remainingTicks / (float)context.stack().getMaxUseTime(user));
         int cooldown = (int)(this.value.getValue(level) * usage);
         cooldown = DSEnchantmentHelper.modifyEnchantedCooldown(world, player, cooldown);
-        player.getItemCooldownManager().set(context.stack().getItem(), cooldown);
+        player.getItemCooldownManager().set(context.stack(), cooldown);
     }
 
     @Override

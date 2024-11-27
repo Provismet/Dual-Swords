@@ -15,7 +15,9 @@ import net.minecraft.enchantment.EnchantmentEffectContext;
 import net.minecraft.enchantment.effect.EnchantmentEffectEntry;
 import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -23,7 +25,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.provismet.CombatPlusCore.interfaces.DualWeapon;
@@ -36,8 +37,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
 @Mixin(Item.class)
@@ -53,23 +52,23 @@ public abstract class ItemMixin {
         if (this instanceof DualWeapon dualWeapon && !this.appliedOffhand) {
             this.appliedOffhand = true;
             AttributeModifiersComponent attributes = this.components.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-            attributes = attributes.with(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
+            attributes = attributes.with(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(AttributeIdentifiers.OFFHAND_DAMAGE, dualWeapon.getOffhandDamage(this.getDefaultStack()), EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.OFFHAND);
             this.components = ComponentMap.builder().addAll(this.components).add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes).build();
         }
     }
 
     @Inject(method="use", at=@At("HEAD"), cancellable=true)
-    private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+    private void attemptParry (World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = user.getStackInHand(hand);
         if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION)) {
             user.setCurrentHand(hand);
-            cir.setReturnValue(TypedActionResult.consume(itemStack));
+            cir.setReturnValue(ActionResult.CONSUME);
         }
     }
     
     @Inject(method="getUseAction", at=@At("HEAD"), cancellable=true)
     private void setParryAction (ItemStack itemStack, CallbackInfoReturnable<UseAction> cir) {
-        Pair<String, Integer> action = EnchantmentHelper.getEffectListAndLevel(itemStack, DSEnchantmentComponentTypes.USE_ACTION);
+        Pair<String, Integer> action = EnchantmentHelper.getHighestLevelEffect(itemStack, DSEnchantmentComponentTypes.USE_ACTION);
         if (action != null) {
             try {
                 cir.setReturnValue(UseAction.valueOf(action.getFirst()));
@@ -109,7 +108,7 @@ public abstract class ItemMixin {
     }
 
     @Inject(method="onStoppedUsing", at=@At("HEAD"))
-    private void onStoppedParrying (ItemStack itemStack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info) {
+    private void onStoppedParrying (ItemStack itemStack, World world, LivingEntity user, int remainingUseTicks, CallbackInfoReturnable<Boolean> cir) {
         if (world instanceof ServerWorld serverWorld) {
             EquipmentSlot slot;
             if (ItemStack.areEqual(itemStack, user.getMainHandStack())) slot = EquipmentSlot.MAINHAND;

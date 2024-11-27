@@ -41,7 +41,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Redirect(method="renderFirstPersonItem",
-        slice=@Slice(from=@At(value="INVOKE", target="Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/util/UseAction;")),
+        slice=@Slice(from=@At(value="INVOKE", target="Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/item/consume/UseAction;")),
         at=@At(value="INVOKE",
             target="Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
             ordinal=2))
@@ -56,7 +56,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Inject(method="renderFirstPersonItem",
-        slice=@Slice(from=@At(value="INVOKE", target="Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/util/UseAction;")),
+        slice=@Slice(from=@At(value="INVOKE", target="Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/item/consume/UseAction;")),
         at=@At(value="INVOKE",
             target="Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
             ordinal=4,

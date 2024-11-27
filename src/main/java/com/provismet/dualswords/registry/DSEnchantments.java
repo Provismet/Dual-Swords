@@ -18,16 +18,16 @@ import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelBasedValue;
 import net.minecraft.enchantment.effect.value.AddEnchantmentEffect;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.loot.condition.DamageSourcePropertiesLootCondition;
 import net.minecraft.predicate.TagPredicate;
 import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.registry.Registerable;
-import net.minecraft.util.UseAction;
 
 public class DSEnchantments {
     public static final EnchantmentContainer PARRY = new EnchantmentContainer(
         DualSwordsMain.identifier("parry"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -62,7 +62,7 @@ public class DSEnchantments {
     );
     public static final EnchantmentContainer RIPOSTE = new EnchantmentContainer(
         DualSwordsMain.identifier("riposte"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -89,7 +89,7 @@ public class DSEnchantments {
     );
     public static final EnchantmentContainer DEFLECT = new EnchantmentContainer(
         DualSwordsMain.identifier("deflect"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -112,7 +112,7 @@ public class DSEnchantments {
 
     public static final EnchantmentContainer LUNGE = new EnchantmentContainer(
         DualSwordsMain.identifier("lunge"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -146,7 +146,7 @@ public class DSEnchantments {
     );
     public static final EnchantmentContainer THRUSTING = new EnchantmentContainer(
         DualSwordsMain.identifier("thrusting"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -173,7 +173,7 @@ public class DSEnchantments {
     );
     public static final EnchantmentContainer FORCEFUL = new EnchantmentContainer(
         DualSwordsMain.identifier("forceful"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
@@ -201,7 +201,7 @@ public class DSEnchantments {
 
     public static final EnchantmentContainer DAISHO = new EnchantmentContainer(
         DualSwordsMain.identifier("daisho"),
-        (itemLookup, enchantmentLookup, damageLookup, blockLookup) -> Enchantment.builder(
+        (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.builder(
             Enchantment.definition(
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
                 itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
