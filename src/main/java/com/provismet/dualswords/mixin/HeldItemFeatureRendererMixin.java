@@ -1,9 +1,12 @@
 package com.provismet.dualswords.mixin;
 
+import com.provismet.dualswords.interfaceMixin.IMixinItemRenderState;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntityRenderState;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.client.render.entity.model.ModelWithArms;
+import net.minecraft.client.render.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.item.consume.UseAction;
@@ -24,23 +27,25 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.math.RotationAxis;
 
 @Mixin(HeldItemFeatureRenderer.class)
-public abstract class HeldItemFeatureRendererMixin<S extends LivingEntityRenderState, M extends EntityModel<S> & ModelWithArms> extends FeatureRenderer<S, M> {
+public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderState, M extends EntityModel<S> & ModelWithArms> extends FeatureRenderer<S, M> {
     protected HeldItemFeatureRendererMixin(FeatureRendererContext<S, M> context) {
         super(context);
     }
 
-    @Inject(method="renderItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/render/item/ItemRenderer;renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V", shift=At.Shift.BEFORE))
-    private void flipBlade (S state, BakedModel model, ItemStack stack, ModelTransformationMode modelTransformation, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, DSEnchantmentTags.REVERSE_RENDER)) {
+    @Inject(method="renderItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/render/item/ItemRenderState;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V", shift=At.Shift.BEFORE))
+    private void flipBlade (S entityState, ItemRenderState itemState, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
+        boolean activeItem = ((IMixinLivingEntityRenderState)entityState).dual_Swords$isUsingItem() && ((IMixinItemRenderState)itemState).dual_Swords$isActive();
+
+        if (((IMixinItemRenderState)itemState).dual_Swords$shouldReverseRender()) {
             matrices.translate(0f, -0.25f, 0.2f);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
             
-            if (((IMixinLivingEntityRenderState)state).dual_Swords$isUsingItem() && ItemStack.areEqual(((IMixinLivingEntityRenderState)state).dual_Swords$getActiveItem(), stack)) {
+            if (activeItem) {
                 float armMultiplier = arm == Arm.RIGHT ? -1f : 1f;
                 matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(armMultiplier * 45f));
             }
         }
-        else if (((IMixinLivingEntityRenderState)state).dual_Swords$isUsingItem() && ItemStack.areEqual(((IMixinLivingEntityRenderState)state).dual_Swords$getActiveItem(), stack) && stack.getUseAction() == UseAction.SPEAR && EnchantmentHelper.hasAnyEnchantmentsIn(stack, DSEnchantmentTags.FLIPPED_SPEAR)) {
+        else if (activeItem && ((IMixinItemRenderState)itemState).dual_Swords$shouldFlipSpear()) {
             matrices.translate(0f, -0.25f, 0.2f);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
         }

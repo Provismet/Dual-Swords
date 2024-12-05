@@ -7,7 +7,6 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,13 +20,6 @@ public abstract class LivingEntityRendererMixin <T extends LivingEntity, S exten
 
     @Inject(method="updateRenderState(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;F)V", at=@At("TAIL"))
     private void addHeldItems (T livingEntity, S state, float f, CallbackInfo info) {
-        if (livingEntity.isUsingItem()) {
-            ((IMixinLivingEntityRenderState)state).dual_Swords$setIsUsingItem(true);
-            ((IMixinLivingEntityRenderState)state).dual_Swords$setActiveItem(livingEntity.getActiveItem());
-        }
-        else {
-            ((IMixinLivingEntityRenderState)state).dual_Swords$setIsUsingItem(false);
-            ((IMixinLivingEntityRenderState)state).dual_Swords$setActiveItem(ItemStack.EMPTY);
-        }
+        ((IMixinLivingEntityRenderState)state).dual_Swords$setIsUsingItem(livingEntity.isUsingItem());
     }
 }

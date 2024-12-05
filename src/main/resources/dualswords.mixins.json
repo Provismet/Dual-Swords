@@ -10,6 +10,8 @@
   "client": [
     "HeldItemFeatureRendererMixin",
     "HeldItemRendererMixin",
+    "ItemModelManagerMixin",
+    "ItemRenderStateMixin",
     "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin"
   ],
