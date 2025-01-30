@@ -1,17 +1,13 @@
 package com.provismet.dualswords;
 
 import com.provismet.CombatPlusCore.loot.functions.EnchantRandomlyFromKeyLootFunction;
+import com.provismet.dualswords.config.DSSettings;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
 import com.provismet.dualswords.registry.DSEnchantmentEntityEffects;
+import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.dualswords.registry.DSLambdas;
 import com.provismet.dualswords.registry.OnStoppedUsingEffects;
 import com.provismet.dualswords.util.registry.DSRegistries;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.provismet.dualswords.config.DSSettings;
-import com.provismet.dualswords.registry.DSEnchantments;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.item.Items;
@@ -20,6 +16,8 @@ import net.minecraft.loot.LootTables;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DualSwordsMain implements ModInitializer {
     public static final String MODID = "dualswords";
