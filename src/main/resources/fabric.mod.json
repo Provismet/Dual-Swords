@@ -41,9 +41,9 @@
 
 	"custom": {
 		"modmenu": {
-		  "links": {
-			"wiki.lilylib.link": "https://github.com/Provismet/Dual-Swords/wiki"
-		  }
+			"links": {
+				"wiki.lilylib.link": "https://github.com/Provismet/Dual-Swords/wiki"
+			}
 		}
-	  }
+	}
 }
