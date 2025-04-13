@@ -2,7 +2,6 @@ package com.provismet.dualswords;
 
 import com.provismet.CombatPlusCore.loot.functions.EnchantRandomlyFromKeyLootFunction;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
-import com.provismet.dualswords.registry.DSEnchantmentEntityEffects;
 import com.provismet.dualswords.registry.DSLambdas;
 import com.provismet.dualswords.registry.OnStoppedUsingEffects;
 import com.provismet.dualswords.util.event.ItemEvents;
@@ -34,7 +33,6 @@ public class DualSwordsMain implements ModInitializer {
     public void onInitialize () {
         DSRegistries.init();
         DSEnchantmentComponentTypes.init();
-        DSEnchantmentEntityEffects.register();
         OnStoppedUsingEffects.register();
         DSLambdas.register();
         DSSettings.read();

@@ -3,7 +3,6 @@
   "package": "com.provismet.dualswords.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ItemCooldownManagerMixin",
     "ItemMixin",
     "LivingEntityMixin"
   ],

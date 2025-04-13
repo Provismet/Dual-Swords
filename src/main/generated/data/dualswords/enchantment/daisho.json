@@ -23,7 +23,7 @@
         }
       }
     ],
-    "dualswords:modify_cooldown": [
+    "combat-plus:modify_cooldown": [
       {
         "effect": {
           "type": "minecraft:add",

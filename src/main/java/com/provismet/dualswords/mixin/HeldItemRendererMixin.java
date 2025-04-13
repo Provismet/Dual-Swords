@@ -1,6 +1,5 @@
 package com.provismet.dualswords.mixin;
 
-import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,8 +1,12 @@
 package com.provismet.dualswords.util.event;
 
 import com.provismet.CombatPlusCore.interfaces.DualWeapon;
+import com.provismet.CombatPlusCore.items.component.MeleeWeaponComponent;
+import com.provismet.CombatPlusCore.registries.CPCDataComponentTypes;
 import com.provismet.CombatPlusCore.utility.item.AttributeIdentifiers;
+import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
 import com.provismet.dualswords.DualSwordsMain;
+import com.provismet.lilylib.util.MoreMath;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.component.DataComponentTypes;
@@ -19,7 +23,7 @@ public abstract class ItemEvents {
         DefaultItemComponentEvents.MODIFY.addPhaseOrdering(Event.DEFAULT_PHASE, POST_DEFAULT);
 
         DefaultItemComponentEvents.MODIFY.register(POST_DEFAULT, context -> {
-            context.modify(item -> item instanceof DualWeapon, (builder, item) -> {
+            context.modify(item -> true, (builder, item) -> {
                 if (item instanceof DualWeapon dualWeapon) {
                     AttributeModifiersComponent component = builder
                         .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
@@ -34,6 +38,24 @@ public abstract class ItemEvents {
                         );
 
                     builder.add(DataComponentTypes.ATTRIBUTE_MODIFIERS, component);
+                }
+                else {
+                    MeleeWeaponComponent component = item.getDefaultStack().getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT);
+                    if (!component.isDual()) return;
+
+                    AttributeModifiersComponent attributes = builder
+                        .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
+                        .with(
+                            EntityAttributes.ATTACK_DAMAGE,
+                            new EntityAttributeModifier(
+                                AttributeIdentifiers.OFFHAND_DAMAGE,
+                                component.dualDamage(),
+                                EntityAttributeModifier.Operation.ADD_VALUE
+                            ),
+                            AttributeModifierSlot.OFFHAND
+                        );
+
+                    builder.add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes);
                 }
             });
         });

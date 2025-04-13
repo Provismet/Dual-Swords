@@ -4,6 +4,20 @@
     "translate": "enchantment.dualswords.lunge"
   },
   "effects": {
+    "combat-plus:data_component": [
+      {
+        "effect": {
+          "type": "combat-plus:max_use_time_component",
+          "ticks": 72000.0
+        }
+      },
+      {
+        "effect": {
+          "type": "combat-plus:use_group_component",
+          "group": "dualswords:lunge_cooldown"
+        }
+      }
+    ],
     "dualswords:on_stopped_using": [
       {
         "effect": {
@@ -19,8 +33,8 @@
         "effect": {
           "type": "dualswords:apply_to_user",
           "effect": {
-            "type": "dualswords:modify_cooldown",
-            "value": 60.0
+            "type": "combat-plus:set_cooldown",
+            "ticks": 60.0
           },
           "minimum_charging_ticks": 9.0
         }

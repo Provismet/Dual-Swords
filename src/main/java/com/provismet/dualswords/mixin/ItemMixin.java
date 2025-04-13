@@ -50,15 +50,6 @@ public abstract class ItemMixin {
         }
     }
 
-    @Inject(method="getMaxUseTime", at=@At("HEAD"), cancellable=true)
-    private void setMaxParryTime (ItemStack itemStack, LivingEntity user, CallbackInfoReturnable<Integer> cir) {
-        if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION)) {
-            if (EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, DSEnchantmentComponentTypes.USE_ACTION_DURATION))
-                cir.setReturnValue((int)CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.USE_ACTION_DURATION, user.getRandom(), itemStack, 0));
-            else cir.setReturnValue(72000);
-        }
-    }
-
     @Inject(method="finishUsing", at=@At("HEAD"))
     private void finishParrying (ItemStack itemStack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (world instanceof ServerWorld serverWorld) {

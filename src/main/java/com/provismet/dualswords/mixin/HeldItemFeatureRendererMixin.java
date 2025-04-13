@@ -2,14 +2,9 @@ package com.provismet.dualswords.mixin;
 
 import com.provismet.dualswords.interfaceMixin.IMixinItemRenderState;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntityRenderState;
-import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.client.render.entity.model.ModelWithArms;
 import net.minecraft.client.render.entity.state.ArmedEntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.item.ModelTransformationMode;
-import net.minecraft.item.consume.UseAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,8 +16,6 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.RotationAxis;
 

@@ -1,29 +1,28 @@
 package com.provismet.dualswords.config;
 
+import com.provismet.CombatPlusCore.utility.CPCConfig;
+import com.provismet.dualswords.DualSwordsMain;
+import com.provismet.lilylib.util.json.JsonBuilder;
+import com.provismet.lilylib.util.json.JsonReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import com.google.gson.stream.JsonReader;
-import com.provismet.dualswords.DualSwordsMain;
-import com.provismet.lilylib.util.JsonBuilder;
+import java.util.Optional;
 
 public class DSSettings {
+    private static final String FILE = "dualswords.json";
+
     private static boolean overrideDatapacks = true;
 
     public static void write () {
-        JsonBuilder builder = new JsonBuilder();
-        String jsonString = builder.start()
-            .append("override_datapack_loot_tables", overrideDatapacks).newLine(false)
-            .closeObject()
+        String jsonString = new JsonBuilder()
+            .append(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES, overrideDatapacks)
             .toString();
         
-        try {
-            FileWriter writer = new FileWriter("config/combat-plus/dualswords.json");
+        try (FileWriter writer = new FileWriter(new File(CPCConfig.FOLDER, FILE))) {
             writer.write(jsonString);
-            writer.close();
         }
         catch (IOException e) {
             DualSwordsMain.LOGGER.error("Error whilst saving config: ", e);
@@ -32,32 +31,15 @@ public class DSSettings {
 
     public static void read () {
         try {
-            FileReader reader = new FileReader("config/combat-plus/dualswords.json");
-            JsonReader parser = new JsonReader(reader);
-            
-            parser.beginObject();
-            while (parser.hasNext()) {
-                String name = parser.nextName();
-                switch (name) {
-                    case "override_datapack_loot_tables":
-                        DSSettings.overrideDatapacks = parser.nextBoolean();
-                        break;
-                
-                    default:
-                        break;
-                }
-            }
-            parser.endObject();
-            parser.close();
+            Optional.ofNullable(JsonReader.file(new File(CPCConfig.FOLDER, FILE)))
+                .flatMap(reader -> reader.getBoolean(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES)).ifPresent(val -> DSSettings.overrideDatapacks = val);
         }
         catch (FileNotFoundException e) {
             DualSwordsMain.LOGGER.info("No config found for Dual Swords, creating one now.");
             try {
-                (new File("config/combat-plus")).mkdirs();
+                (new File(CPCConfig.FOLDER)).mkdirs();
             }
-            catch (Exception e3) {
-
-            }
+            catch (Exception ignored) {}
             DSSettings.write();
         }
         catch (Exception e2) {

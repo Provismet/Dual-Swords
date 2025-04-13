@@ -4,19 +4,53 @@
     "translate": "enchantment.dualswords.parry"
   },
   "effects": {
-    "dualswords:action_duration": {
-      "type": "minecraft:add",
-      "value": {
-        "type": "minecraft:linear",
-        "base": 10.0,
-        "per_level_above_first": 10.0
+    "combat-plus:data_component": [
+      {
+        "effect": {
+          "type": "combat-plus:max_use_time_component",
+          "ticks": {
+            "type": "minecraft:linear",
+            "base": 10.0,
+            "per_level_above_first": 10.0
+          }
+        }
+      },
+      {
+        "effect": {
+          "type": "combat-plus:blocks_attacks_component",
+          "block_delay_seconds": 0.1,
+          "block_sound": {
+            "sound_id": "minecraft:entity.player.attack.sweep"
+          },
+          "bypassed_by": "#dualswords:bypasses_parry",
+          "disabled_sound": "minecraft:entity.item.break",
+          "item_damage": {
+            "base": 1.0,
+            "factor": 1.0,
+            "threshold": 3.0
+          }
+        }
+      },
+      {
+        "effect": {
+          "type": "combat-plus:use_group_component",
+          "group": "dualswords:parry_cooldown"
+        }
       }
-    },
+    ],
+    "combat-plus:post_block": [
+      {
+        "effect": {
+          "type": "combat-plus:code_execution_double_entity",
+          "function": "dualswords:parry"
+        }
+      }
+    ],
     "dualswords:on_finished_using": [
       {
         "effect": {
-          "type": "dualswords:modify_cooldown",
-          "value": 30.0
+          "type": "combat-plus:set_cooldown",
+          "ticks": 30.0
         }
       }
     ],

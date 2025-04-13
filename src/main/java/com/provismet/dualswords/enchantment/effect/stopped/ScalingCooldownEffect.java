@@ -2,8 +2,9 @@ package com.provismet.dualswords.enchantment.effect.stopped;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.provismet.CombatPlusCore.registries.CPCEnchantmentComponentTypes;
+import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
 import com.provismet.dualswords.enchantment.component.EnchantmentStoppedUsingEffect;
-import com.provismet.dualswords.util.DSEnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentEffectContext;
 import net.minecraft.enchantment.EnchantmentLevelBasedValue;
 import net.minecraft.entity.LivingEntity;
@@ -18,8 +19,7 @@ public record ScalingCooldownEffect (EnchantmentLevelBasedValue value) implement
         if (!(user instanceof PlayerEntity player)) return;
 
         float usage = (float)remainingTicks / (float)context.stack().getMaxUseTime(user);
-        int cooldown = (int)(this.value.getValue(level) * usage);
-        cooldown = DSEnchantmentHelper.modifyEnchantedCooldown(world, player, cooldown);
+        int cooldown = (int)CPCEnchantmentHelper.modifyValue(CPCEnchantmentComponentTypes.MODIFY_COOLDOWN, world, context.stack(), user, this.value.getValue(level) * usage);
         player.getItemCooldownManager().set(context.stack(), cooldown);
     }
 

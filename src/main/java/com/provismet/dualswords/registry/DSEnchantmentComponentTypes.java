@@ -16,8 +16,6 @@ import java.util.function.UnaryOperator;
 
 public abstract class DSEnchantmentComponentTypes {
     public static final ComponentType<String> USE_ACTION = register("use_action", builder -> builder.codec(Codec.STRING));
-    public static final ComponentType<EnchantmentValueEffect> USE_ACTION_DURATION = register("action_duration", builder -> builder.codec(EnchantmentValueEffect.CODEC));
-    public static final ComponentType<List<EnchantmentEffectEntry<EnchantmentValueEffect>>> MODIFY_COOLDOWN = register("modify_cooldown", builder -> builder.codec(EnchantmentEffectEntry.createCodec(EnchantmentValueEffect.CODEC, LootContextTypes.ENCHANTED_ENTITY).listOf()));
     public static final ComponentType<List<EnchantmentEffectEntry<EnchantmentValueEffect>>> DEFLECTION_SPEED = register("projectile_deflection_speed", builder -> builder.codec(EnchantmentEffectEntry.createCodec(EnchantmentValueEffect.CODEC, LootContextTypes.ENCHANTED_ENTITY).listOf()));
 
     public static final ComponentType<List<EnchantmentEffectEntry<EnchantmentStoppedUsingEffect>>> ON_STOPPED_USING = register("on_stopped_using", builder -> builder.codec(EnchantmentEffectEntry.createCodec(EnchantmentStoppedUsingEffect.CODEC, LootContextTypes.ENCHANTED_ENTITY).listOf()));

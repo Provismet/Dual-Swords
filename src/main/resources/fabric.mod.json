@@ -30,6 +30,7 @@
 	"mixins": [
 		"dualswords.mixins.json"
 	],
+	"accessWidener": "dualswords.accesswidener",
 
 	"depends": {
 		"fabricloader": ">=0.15.0",
