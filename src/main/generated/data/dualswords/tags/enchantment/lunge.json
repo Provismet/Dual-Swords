@@ -1,7 +1,9 @@
 {
   "values": [
     "dualswords:lunge",
-    "dualswords:thrusting",
-    "dualswords:forceful"
+    {
+      "id": "#dualswords:requires_lunge",
+      "required": false
+    }
   ]
 }

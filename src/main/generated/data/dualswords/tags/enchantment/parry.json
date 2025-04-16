@@ -1,7 +1,9 @@
 {
   "values": [
     "dualswords:parry",
-    "dualswords:riposte",
-    "dualswords:deflect"
+    {
+      "id": "#dualswords:requires_parry",
+      "required": false
+    }
   ]
 }

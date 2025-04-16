@@ -4,6 +4,7 @@ import com.provismet.CombatPlusCore.loot.functions.EnchantRandomlyFromKeyLootFun
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
 import com.provismet.dualswords.registry.DSLambdas;
 import com.provismet.dualswords.registry.OnStoppedUsingEffects;
+import com.provismet.dualswords.util.event.EnchantmentEventHandler;
 import com.provismet.dualswords.util.event.ItemEvents;
 import com.provismet.dualswords.util.registry.DSRegistries;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class DualSwordsMain implements ModInitializer {
         DSLambdas.register();
         DSSettings.read();
         ItemEvents.RegisterComponentPhase();
+        EnchantmentEventHandler.registerAllowEnchanting();
 
         LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
             if (source.isBuiltin() || DSSettings.shouldOverrideDatapacks()) {

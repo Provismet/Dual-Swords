@@ -13,6 +13,10 @@ public abstract class DSEnchantmentTags {
     public static final TagKey<Enchantment> REVERSE_RENDER = DSEnchantmentTags.of("render_upside-down");
     public static final TagKey<Enchantment> FLIPPED_SPEAR = DSEnchantmentTags.of("flipped_spear");
 
+    // Special Requirement
+    public static final TagKey<Enchantment> REQUIRES_PARRY = DSEnchantmentTags.of("requires_parry");
+    public static final TagKey<Enchantment> REQUIRES_LUNGE = DSEnchantmentTags.of("requires_lunge");
+
     // Exclusive Set
     public static final TagKey<Enchantment> PARRY_EXCLUSIVE = DSEnchantmentTags.of("exclusive_set/parry");
     public static final TagKey<Enchantment> PARRY_BONUS_EXCLUSIVE = DSEnchantmentTags.of("exclusive_set/parry_bonus");

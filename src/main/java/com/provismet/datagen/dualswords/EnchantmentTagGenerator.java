@@ -29,11 +29,17 @@ public class EnchantmentTagGenerator extends EnchantmentTagProvider {
 
         getOrCreateTagBuilder(DSEnchantmentTags.PARRY)
             .add(DSEnchantments.PARRY.getKey())
-            .add(DSEnchantments.RIPOSTE.getKey())
-            .add(DSEnchantments.DEFLECT.getKey());
+            .addOptionalTag(DSEnchantmentTags.REQUIRES_PARRY);
 
         getOrCreateTagBuilder(DSEnchantmentTags.LUNGE)
             .add(DSEnchantments.LUNGE.getKey())
+            .addOptionalTag(DSEnchantmentTags.REQUIRES_LUNGE);
+
+        getOrCreateTagBuilder(DSEnchantmentTags.REQUIRES_PARRY)
+            .add(DSEnchantments.RIPOSTE.getKey())
+            .add(DSEnchantments.DEFLECT.getKey());
+
+        getOrCreateTagBuilder(DSEnchantmentTags.REQUIRES_LUNGE)
             .add(DSEnchantments.THRUSTING.getKey())
             .add(DSEnchantments.FORCEFUL.getKey());
 
