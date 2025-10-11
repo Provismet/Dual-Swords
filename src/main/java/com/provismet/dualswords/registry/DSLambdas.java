@@ -3,7 +3,6 @@ package com.provismet.dualswords.registry;
 import com.provismet.CombatPlusCore.enchantment.effect.doubleEntity.CodeExecutionDoubleEntityEffect;
 import com.provismet.CombatPlusCore.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
 import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.CombatPlusCore.interfaces.MeleeWeapon;
 import com.provismet.CombatPlusCore.items.component.MeleeWeaponComponent;
 import com.provismet.CombatPlusCore.registries.CPCDataComponentTypes;
 import com.provismet.CombatPlusCore.utility.CPCCallbackUtil;
@@ -13,13 +12,9 @@ import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
 import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,8 +39,8 @@ public abstract class DSLambdas {
             player.addVelocity(velocity);
             player.velocityModified = true;
             ((IMixinLivingEntity)player).dual_Swords$setLungeTicks(context.stack(), context.slot(), 30);
-            player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
-            context.stack().damage(1, player, LivingEntity.getSlotForHand(player.getActiveHand()));
+            player.getEntityWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
+            context.stack().damage(1, player, player.getActiveHand().getEquipmentSlot());
         });
 
         registerSingleEntityCondition("dual_wielder", entity -> {
@@ -73,7 +68,7 @@ public abstract class DSLambdas {
                         target.takeKnockback(knockback * 0.5, MathHelper.sin(player.getYaw() * ((float) Math.PI / 180)), -MathHelper.cos(player.getYaw() * ((float) Math.PI / 180)));
                         CPCCallbackUtil.postChargedHit(world, context.stack(), context.slot(), player, target);
                     }
-                    context.stack().damage(1, player, LivingEntity.getSlotForHand(player.getActiveHand())); // Do not use posthit, it ONLY breaks the mainhand.
+                    context.stack().damage(1, player, player.getActiveHand().getEquipmentSlot()); // Do not use posthit, it ONLY breaks the mainhand.
                 }
                 else if (attacker instanceof PersistentProjectileEntity persistentProjectile) {
                     float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, world, context.stack(), player, 1);

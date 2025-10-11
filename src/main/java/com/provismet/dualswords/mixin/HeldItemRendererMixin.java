@@ -1,6 +1,7 @@
 package com.provismet.dualswords.mixin;
 
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,7 +56,7 @@ public abstract class HeldItemRendererMixin {
             ordinal = 2
         )
     )
-    private void animateParry (HeldItemRenderer thisRenderer, MatrixStack matrices1, Arm arm, float equipProgress1, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    private void animateParry (HeldItemRenderer instance, MatrixStack matrices, Arm arm, float equipProgress, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER)) {
             applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
             applyParryOffset(matrices1, arm, equipProgress1);
@@ -75,8 +76,8 @@ public abstract class HeldItemRendererMixin {
             shift = At.Shift.AFTER
         )
     )
-    private void animateLunge (AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE.getEntryOrThrow(player.getWorld().getRegistryManager()), item) > 0) {
+    private void animateLunge (AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
+        if (EnchantmentHelper.getLevel(DSEnchantments.LUNGE.getEntryOrThrow(player.getEntityWorld().getRegistryManager()), item) > 0) {
             matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(75f * (1 - equipProgress)));
             matrices.translate(0f, -0.75f, 0.75f);
         }
@@ -90,7 +91,7 @@ public abstract class HeldItemRendererMixin {
             ordinal = 2
         )
     )
-    private void applyUpwardsEquip (HeldItemRenderer instance, float swingProgress1, float equipProgress1, MatrixStack matrices1, int armX, Arm arm, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    private void applyUpwardsEquip (HeldItemRenderer instance, float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress1, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) {
             float f = -0.4F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) Math.PI);
             float g = 0.2F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) (Math.PI * 2));
@@ -103,7 +104,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Inject(method="renderFirstPersonItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/util/math/MatrixStack;push()V", shift=At.Shift.AFTER))
-    private void flipBlade (AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
+    private void flipBlade (AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) {
             Arm arm = hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
             float sideMultiplier = arm == Arm.RIGHT ? -1f : 1f;

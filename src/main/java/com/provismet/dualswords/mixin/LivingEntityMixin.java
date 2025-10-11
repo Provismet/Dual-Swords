@@ -62,7 +62,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 this.lungeTicks = 0;
                 this.lungeWeapon = ItemStack.EMPTY;
             }
-            else if (this.getWorld() instanceof ServerWorld serverWorld) {
+            else if (this.getEntityWorld() instanceof ServerWorld serverWorld) {
                 double deltaX = this.random.nextDouble() * 0.5 * MathHelper.PI;
                 double deltaZ = this.random.nextDouble() * 0.5 * MathHelper.PI;
 
@@ -72,9 +72,9 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                 double z = MathHelper.cos(angle) * 0.15 + this.getZ();
                 serverWorld.spawnParticles(ParticleTypes.SWEEP_ATTACK, x, y, z, 3, deltaX, 0.0, deltaZ, 0.0);
 
-                Vec3d attackPos = this.getPos().add(this.getVelocity().normalize().multiply(3));
+                Vec3d attackPos = this.getEntityPos().add(this.getVelocity().normalize().multiply(3));
                 Box hitbox = Box.of(attackPos, 2.0, 0.5, 2.0).union(this.getBoundingBox().expand(1.0, 0.5, 1.0));
-                List<Entity> others = this.getWorld().getOtherEntities(this, hitbox);
+                List<Entity> others = this.getEntityWorld().getOtherEntities(this, hitbox);
                 for (Entity other : others) {
                     if (other instanceof LivingEntity target) {
                         this.lungeTicks = 0;

@@ -62,7 +62,7 @@ public abstract class ItemMixin {
                 CPCEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
                     for (EnchantmentEffectEntry<EnchantmentEntityEffect> effect : enchantment.value().getEffect(DSEnchantmentComponentTypes.ON_FINISHED_USING)) {
                         if (effect.test(CPCLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
-                            effect.effect().apply(serverWorld, level, new EnchantmentEffectContext(itemStack, slot, user), user, user.getPos());
+                            effect.effect().apply(serverWorld, level, new EnchantmentEffectContext(itemStack, slot, user), user, user.getEntityPos());
                     }
                 }, user, slot);
             }

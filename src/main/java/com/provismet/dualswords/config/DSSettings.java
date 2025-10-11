@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public class DSSettings {
-    private static final String FILE = "dualswords.json";
+    private static final Path FILE = CPCConfig.getConfigDirectory().resolve("dualswords.json");
 
     private static boolean overrideDatapacks = true;
 
@@ -21,7 +22,7 @@ public class DSSettings {
             .append(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES, overrideDatapacks)
             .toString();
         
-        try (FileWriter writer = new FileWriter(new File(CPCConfig.FOLDER, FILE))) {
+        try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(jsonString);
         }
         catch (IOException e) {
@@ -31,15 +32,11 @@ public class DSSettings {
 
     public static void read () {
         try {
-            Optional.ofNullable(JsonReader.file(new File(CPCConfig.FOLDER, FILE)))
+            Optional.ofNullable(JsonReader.file(FILE.toFile()))
                 .flatMap(reader -> reader.getBoolean(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES)).ifPresent(val -> DSSettings.overrideDatapacks = val);
         }
         catch (FileNotFoundException e) {
             DualSwordsMain.LOGGER.info("No config found for Dual Swords, creating one now.");
-            try {
-                (new File(CPCConfig.FOLDER)).mkdirs();
-            }
-            catch (Exception ignored) {}
             DSSettings.write();
         }
         catch (Exception e2) {

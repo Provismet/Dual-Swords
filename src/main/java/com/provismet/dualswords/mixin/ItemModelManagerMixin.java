@@ -5,10 +5,10 @@ import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.HeldItemContext;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,9 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemModelManager.class)
 public abstract class ItemModelManagerMixin {
     @Inject(method="update", at=@At("HEAD"))
-    private void modifyItemRender (ItemRenderState renderState, ItemStack stack, ItemDisplayContext displayContext, World world, LivingEntity entity, int seed, CallbackInfo ci) {
+    private void modifyItemRender (ItemRenderState renderState, ItemStack stack, ItemDisplayContext displayContext, World world, HeldItemContext heldItemContext, int seed, CallbackInfo ci) {
         ((IMixinItemRenderState)renderState).dual_Swords$setReverseRender(EnchantmentHelper.hasAnyEnchantmentsIn(stack, DSEnchantmentTags.REVERSE_RENDER));
         ((IMixinItemRenderState)renderState).dual_Swords$setFlippedSpear(stack.getUseAction() == UseAction.SPEAR && EnchantmentHelper.hasAnyEnchantmentsIn(stack, DSEnchantmentTags.FLIPPED_SPEAR));
-        ((IMixinItemRenderState)renderState).dual_Swords$setIsActive(entity != null && entity.isUsingItem() && ItemStack.areEqual(entity.getActiveItem(), stack));
+        if (heldItemContext != null) {
+            ((IMixinItemRenderState)renderState).dual_Swords$setIsActive(
+                heldItemContext.getEntity() != null
+                    && heldItemContext.getEntity().isUsingItem()
+                    && ItemStack.areEqual(heldItemContext.getEntity().getActiveItem(), stack)
+            );
+        }
     }
 }

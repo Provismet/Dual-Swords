@@ -15,7 +15,7 @@ public record ApplyToUserEffect (EnchantmentEntityEffect effect, EnchantmentLeve
     @Override
     public void onStoppedUsing (ServerWorld world, int level, EnchantmentEffectContext context, LivingEntity user, int remainingTicks) {
         if (context.stack().getMaxUseTime(user) - remainingTicks >= this.minTicks.getValue(level))
-            this.effect.apply(world, level, context, user, user.getPos());
+            this.effect.apply(world, level, context, user, user.getEntityPos());
     }
 
     @Override
