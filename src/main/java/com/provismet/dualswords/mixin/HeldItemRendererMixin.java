@@ -1,5 +1,6 @@
 package com.provismet.dualswords.mixin;
 
+import com.provismet.dualswords.config.DSSettings;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.util.math.MathHelper;
@@ -57,7 +58,7 @@ public abstract class HeldItemRendererMixin {
         )
     )
     private void animateParry (HeldItemRenderer instance, MatrixStack matrices, Arm arm, float equipProgress, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
-        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER)) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords()) {
             applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
             applyParryOffset(matrices1, arm, equipProgress1);
         }
@@ -92,7 +93,7 @@ public abstract class HeldItemRendererMixin {
         )
     )
     private void applyUpwardsEquip (HeldItemRenderer instance, float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress1, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
-        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
             float f = -0.4F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) Math.PI);
             float g = 0.2F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) (Math.PI * 2));
             float h = -0.2F * MathHelper.sin(swingProgress1 * (float) Math.PI);
@@ -105,7 +106,7 @@ public abstract class HeldItemRendererMixin {
 
     @Inject(method="renderFirstPersonItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/util/math/MatrixStack;push()V", shift=At.Shift.AFTER))
     private void flipBlade (AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
-        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && swingProgress == 0) {
+        if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
             Arm arm = hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
             float sideMultiplier = arm == Arm.RIGHT ? -1f : 1f;
             matrices.translate(0.1f * sideMultiplier, -0.8f, -1.25f);
