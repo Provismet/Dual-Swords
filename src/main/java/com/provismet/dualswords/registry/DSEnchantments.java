@@ -152,7 +152,7 @@ public class DSEnchantments {
             )
         ).addNonListEffect(
             DSEnchantmentComponentTypes.USE_ACTION,
-            UseAction.SPEAR.name()
+            UseAction.TRIDENT.name()
         ).addEffect(
             DSEnchantmentComponentTypes.ON_STOPPED_USING,
             new ApplyToUserEffect(

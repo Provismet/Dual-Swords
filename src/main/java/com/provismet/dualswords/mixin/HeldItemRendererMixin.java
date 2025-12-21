@@ -1,9 +1,17 @@
 package com.provismet.dualswords.mixin;
 
 import com.provismet.dualswords.config.DSSettings;
+import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.render.item.HeldItemRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Arm;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -13,29 +21,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.provismet.dualswords.registry.DSEnchantments;
-
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.item.HeldItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.RotationAxis;
-
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
     @Shadow protected abstract void applyEquipOffset (MatrixStack matrices, Arm arm, float equipProgress);
-    @Shadow protected abstract void swingArm (float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm);
+    @Shadow protected abstract void swingArm (float swingProgress, MatrixStack matrices, int armX, Arm arm);
 
     @Shadow protected abstract void applySwingOffset (MatrixStack matrices, Arm arm, float swingProgress);
 
     @Unique
     private void applyParryOffset (MatrixStack matrices, Arm arm, float equipProgress) {
         float armMultiplier = arm == Arm.RIGHT ? -1f : 1f;
-        matrices.translate(0.5f * armMultiplier, 0f, 0.25f);
+        matrices.translate(0.75f * armMultiplier, 0f, 0.1f);
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(55f * (1f - equipProgress)));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(armMultiplier * 125f * (1f - equipProgress)));
     }
@@ -49,18 +45,19 @@ public abstract class HeldItemRendererMixin {
     @Redirect(
         method = "renderFirstPersonItem",
         slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/item/consume/UseAction;")
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getUseAction()Lnet/minecraft/item/consume/UseAction;"),
+            to = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;isUsingRiptide()Z")
         ),
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
-            ordinal = 2
+            ordinal = 0
         )
     )
     private void animateParry (HeldItemRenderer instance, MatrixStack matrices, Arm arm, float equipProgress, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords()) {
-            applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
-            applyParryOffset(matrices1, arm, equipProgress1);
+            this.applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
+            this.applyParryOffset(matrices1, arm, equipProgress1);
         }
         else {
             this.applyEquipOffset(matrices1, arm, equipProgress1);
@@ -73,8 +70,8 @@ public abstract class HeldItemRendererMixin {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
-            ordinal = 4,
-            shift = At.Shift.AFTER
+            shift = At.Shift.AFTER,
+            ordinal = 0
         )
     )
     private void animateLunge (AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
@@ -88,20 +85,15 @@ public abstract class HeldItemRendererMixin {
         method = "renderFirstPersonItem",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/render/item/HeldItemRenderer;swingArm(FFLnet/minecraft/client/util/math/MatrixStack;ILnet/minecraft/util/Arm;)V",
-            ordinal = 2
+            target = "Lnet/minecraft/client/render/item/HeldItemRenderer;applyEquipOffset(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/Arm;F)V",
+            ordinal = 4
         )
     )
-    private void applyUpwardsEquip (HeldItemRenderer instance, float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress1, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
+    private void applyUpwardsEquip (HeldItemRenderer instance, MatrixStack matrices, Arm arm, float equipProgress, AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress1, MatrixStack matrices1, OrderedRenderCommandQueue orderedRenderCommandQueue, int light) {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
-            float f = -0.4F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) Math.PI);
-            float g = 0.2F * MathHelper.sin(MathHelper.sqrt(swingProgress1) * (float) (Math.PI * 2));
-            float h = -0.2F * MathHelper.sin(swingProgress1 * (float) Math.PI);
-            matrices1.translate((float)armX * f, g, h);
-            this.applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
-            this.applySwingOffset(matrices1, arm, swingProgress1);
+            this.applyEquipOffsetUpwards(matrices1, arm, equipProgress);
         }
-        else this.swingArm(swingProgress1, equipProgress1, matrices1, armX, arm);
+        else this.applyEquipOffset(matrices, arm, equipProgress);
     }
 
     @Inject(method="renderFirstPersonItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/util/math/MatrixStack;push()V", shift=At.Shift.AFTER))
@@ -109,7 +101,7 @@ public abstract class HeldItemRendererMixin {
         if (EnchantmentHelper.hasAnyEnchantmentsIn(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
             Arm arm = hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
             float sideMultiplier = arm == Arm.RIGHT ? -1f : 1f;
-            matrices.translate(0.1f * sideMultiplier, -0.8f, -1.25f);
+            matrices.translate(-0.15f * sideMultiplier, -0.9f, -1.5f);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
         }
     }

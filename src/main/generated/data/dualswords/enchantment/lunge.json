@@ -40,7 +40,7 @@
         }
       }
     ],
-    "dualswords:use_action": "SPEAR"
+    "dualswords:use_action": "TRIDENT"
   },
   "exclusive_set": "#dualswords:exclusive_set/lunge",
   "max_cost": {

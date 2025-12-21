@@ -11,6 +11,7 @@ import net.minecraft.client.render.entity.model.ModelWithArms;
 import net.minecraft.client.render.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +26,7 @@ public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderSt
     }
 
     @Inject(method="renderItem", at=@At(value="INVOKE", target="Lnet/minecraft/client/render/item/ItemRenderState;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V", shift=At.Shift.BEFORE))
-    private void flipBlade (S entityState, ItemRenderState itemRenderState, Arm arm, MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, int light, CallbackInfo ci) {
+    private void flipBlade (S entityState, ItemRenderState itemRenderState, ItemStack stack, Arm arm, MatrixStack matrices, OrderedRenderCommandQueue queue, int light, CallbackInfo ci) {
         boolean activeItem = ((IMixinLivingEntityRenderState)entityState).dual_Swords$isUsingItem() && ((IMixinItemRenderState)itemRenderState).dual_Swords$isActive();
 
         if (((IMixinItemRenderState)itemRenderState).dual_Swords$shouldReverseRender()) {

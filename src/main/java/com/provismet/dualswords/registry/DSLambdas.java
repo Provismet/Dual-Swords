@@ -19,6 +19,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -37,7 +38,7 @@ public abstract class DSLambdas {
             double dz = MathHelper.cos(user.getHeadYaw() / MathHelper.DEGREES_PER_RADIAN);
             Vec3d velocity = new Vec3d(dx, 0.0, dz).multiply(0.5 * level);
             player.addVelocity(velocity);
-            player.velocityModified = true;
+            player.knockedBack = true; // This is pretty much the new "velocityDirty". Not sure if Minecraft bug or not.
             ((IMixinLivingEntity)player).dual_Swords$setLungeTicks(context.stack(), context.slot(), 30);
             player.getEntityWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1f, 1f);
             context.stack().damage(1, player, player.getActiveHand().getEquipmentSlot());
@@ -74,8 +75,11 @@ public abstract class DSLambdas {
                     float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, world, context.stack(), player, 1);
                     persistentProjectile.setVelocity(persistentProjectile.getVelocity().multiply(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
                 }
-                player.spawnSweepAttackParticles();
                 player.itemUseTimeLeft = 1;
+
+                double offsetX = -MathHelper.sin(player.getYaw() * (float) (Math.PI / 180.0));
+                double offsetZ = MathHelper.cos(player.getYaw() * (float) (Math.PI / 180.0));
+                world.spawnParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + offsetX, player.getBodyY(0.5), player.getZ() + offsetZ, 0, offsetX, 0.0, offsetZ, 0.0);
             }
         });
     }
