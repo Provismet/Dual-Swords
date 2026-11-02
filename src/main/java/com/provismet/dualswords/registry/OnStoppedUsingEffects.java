@@ -7,7 +7,7 @@ import com.provismet.dualswords.enchantment.effect.stopped.ReverseScalingCooldow
 import com.provismet.dualswords.enchantment.effect.stopped.ScalingCooldownEffect;
 import com.provismet.dualswords.enchantment.effect.stopped.ApplyToUserEffect;
 import com.provismet.dualswords.util.registry.DSRegistries;
-import net.minecraft.registry.Registry;
+import net.minecraft.core.Registry;
 
 public abstract class OnStoppedUsingEffects {
     public static void register () {

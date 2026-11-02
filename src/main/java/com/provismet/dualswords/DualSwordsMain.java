@@ -15,19 +15,19 @@ import com.provismet.dualswords.registry.DSEnchantments;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 
 public class DualSwordsMain implements ModInitializer {
     public static final String MODID = "dualswords";
     public static final Logger LOGGER = LoggerFactory.getLogger("Dual Swords");
     
     public static Identifier identifier (String path) {
-        return Identifier.of(MODID, path);
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
     @Override
@@ -42,25 +42,25 @@ public class DualSwordsMain implements ModInitializer {
 
         LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
             if (source.isBuiltin() || DSSettings.shouldOverrideDatapacks()) {
-                if (LootTables.STRONGHOLD_LIBRARY_CHEST.equals(key)) {
-                    LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.333f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
-                    tableBuilder.pool(lootPool);
+                if (BuiltInLootTables.STRONGHOLD_LIBRARY.equals(key)) {
+                    LootPool.Builder lootPool = LootPool.lootPool().setRolls(BinomialDistributionGenerator.binomial(1, 0.333f));
+                    lootPool.add(LootItem.lootTableItem(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
+                    tableBuilder.withPool(lootPool);
                 }
-                else if (LootTables.WOODLAND_MANSION_CHEST.equals(key)) {
-                    LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.2f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
-                    tableBuilder.pool(lootPool);
+                else if (BuiltInLootTables.WOODLAND_MANSION.equals(key)) {
+                    LootPool.Builder lootPool = LootPool.lootPool().setRolls(BinomialDistributionGenerator.binomial(1, 0.2f));
+                    lootPool.add(LootItem.lootTableItem(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
+                    tableBuilder.withPool(lootPool);
                 }
-                else if (LootTables.PILLAGER_OUTPOST_CHEST.equals(key)) {
-                    LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.15f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
-                    tableBuilder.pool(lootPool);
+                else if (BuiltInLootTables.PILLAGER_OUTPOST.equals(key)) {
+                    LootPool.Builder lootPool = LootPool.lootPool().setRolls(BinomialDistributionGenerator.binomial(1, 0.15f));
+                    lootPool.add(LootItem.lootTableItem(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
+                    tableBuilder.withPool(lootPool);
                 }
-                else if (LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY.equals(key)) {
-                    LootPool.Builder lootPool = LootPool.builder().rolls(BinomialLootNumberProvider.create(1, 0.05f));
-                    lootPool.with(ItemEntry.builder(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
-                    tableBuilder.pool(lootPool);
+                else if (BuiltInLootTables.WEAPONSMITH_GIFT.equals(key)) {
+                    LootPool.Builder lootPool = LootPool.lootPool().setRolls(BinomialDistributionGenerator.binomial(1, 0.05f));
+                    lootPool.add(LootItem.lootTableItem(Items.BOOK).apply(EnchantRandomlyFromKeyLootFunction.create().option(DSEnchantments.DAISHO)));
+                    tableBuilder.withPool(lootPool);
                 }
             }
         });

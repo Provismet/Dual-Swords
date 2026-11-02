@@ -1,8 +1,8 @@
 package com.provismet.dualswords;
 
 import com.provismet.lilylib.container.DamageTypeContainer;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.Registerable;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.world.damagesource.DamageType;
 
 public class DSDamageTypes {
     public static final DamageTypeContainer RIPOSTE = createDamageType("riposte");
@@ -12,7 +12,7 @@ public class DSDamageTypes {
         return new DamageTypeContainer(DualSwordsMain.identifier(name), new DamageType(name, 0.1f));
     }
 
-    public static void bootstrap (Registerable<DamageType> registerable) {
+    public static void bootstrap (BootstrapContext<DamageType> registerable) {
         registerable.register(RIPOSTE.getKey(), RIPOSTE.getDamageType());
         registerable.register(LUNGE.getKey(), LUNGE.getDamageType());
     }

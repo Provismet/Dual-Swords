@@ -9,12 +9,12 @@ import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.lilylib.util.MoreMath;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public abstract class ItemEvents {
     public static final Identifier POST_DEFAULT = DualSwordsMain.identifier("post_default");
@@ -25,37 +25,37 @@ public abstract class ItemEvents {
         DefaultItemComponentEvents.MODIFY.register(POST_DEFAULT, context -> {
             context.modify(item -> true, (builder, item) -> {
                 if (item instanceof DualWeapon dualWeapon) {
-                    AttributeModifiersComponent component = builder
-                        .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
-                        .with(
-                            EntityAttributes.ATTACK_DAMAGE,
-                            new EntityAttributeModifier(
+                    ItemAttributeModifiers component = builder
+                        .getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY)
+                        .withModifierAdded(
+                            Attributes.ATTACK_DAMAGE,
+                            new AttributeModifier(
                                 AttributeIdentifiers.OFFHAND_DAMAGE,
-                                dualWeapon.getOffhandDamage(item.getDefaultStack()),
-                                EntityAttributeModifier.Operation.ADD_VALUE
+                                dualWeapon.getOffhandDamage(item.getDefaultInstance()),
+                                AttributeModifier.Operation.ADD_VALUE
                             ),
-                            AttributeModifierSlot.OFFHAND
+                            EquipmentSlotGroup.OFFHAND
                         );
 
-                    builder.add(DataComponentTypes.ATTRIBUTE_MODIFIERS, component);
+                    builder.set(DataComponents.ATTRIBUTE_MODIFIERS, component);
                 }
                 else {
-                    MeleeWeaponComponent component = item.getDefaultStack().getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT);
+                    MeleeWeaponComponent component = item.getDefaultInstance().getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT);
                     if (!component.isDual()) return;
 
-                    AttributeModifiersComponent attributes = builder
-                        .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
-                        .with(
-                            EntityAttributes.ATTACK_DAMAGE,
-                            new EntityAttributeModifier(
+                    ItemAttributeModifiers attributes = builder
+                        .getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY)
+                        .withModifierAdded(
+                            Attributes.ATTACK_DAMAGE,
+                            new AttributeModifier(
                                 AttributeIdentifiers.OFFHAND_DAMAGE,
                                 component.dualDamage(),
-                                EntityAttributeModifier.Operation.ADD_VALUE
+                                AttributeModifier.Operation.ADD_VALUE
                             ),
-                            AttributeModifierSlot.OFFHAND
+                            EquipmentSlotGroup.OFFHAND
                         );
 
-                    builder.add(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes);
+                    builder.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
                 }
             });
         });

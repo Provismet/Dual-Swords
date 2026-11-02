@@ -1,11 +1,11 @@
 package com.provismet.dualswords.mixin;
 
 import com.provismet.dualswords.interfaceMixin.IMixinItemRenderState;
-import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(ItemRenderState.class)
+@Mixin(ItemStackRenderState.class)
 public abstract class ItemRenderStateMixin implements IMixinItemRenderState {
     @Unique private boolean shouldReverseRender;
     @Unique private boolean shouldFlipSpear;

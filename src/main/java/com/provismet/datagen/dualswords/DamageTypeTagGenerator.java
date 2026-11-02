@@ -4,22 +4,20 @@ import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import com.provismet.lilylib.datagen.tag.LilyTagProviders;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTypeTagGenerator extends LilyTagProviders.LilyDamageTypeTagProvider {
-    public DamageTypeTagGenerator (FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public DamageTypeTagGenerator (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure (RegistryWrapper.WrapperLookup wrapperLookup) {
+    protected void addTags (HolderLookup.Provider wrapperLookup) {
         this.builder(DSDamageTypeTags.IS_OFFHANDED)
             .add(DSDamageTypes.LUNGE.getKey())
             .add(DSDamageTypes.RIPOSTE.getKey());
@@ -28,9 +26,9 @@ public class DamageTypeTagGenerator extends LilyTagProviders.LilyDamageTypeTagPr
             .add(DSDamageTypes.RIPOSTE.getKey())
             .addOptionalTag(DamageTypeTags.BYPASSES_SHIELD)
             .addOptionalTag(DamageTypeTags.IS_EXPLOSION)
-            .addOptionalTag(TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("proviorigins", "disables_shields")));
+            .addOptionalTag(TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("proviorigins", "disables_shields")));
 
-        this.builder(TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("extended-enchanting", "melee")))
+        this.builder(TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("extended-enchanting", "melee")))
             .addOptionalTag(DSDamageTypeTags.IS_OFFHANDED);
     }
 }

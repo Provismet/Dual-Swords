@@ -3,17 +3,16 @@ package com.provismet.datagen.dualswords;
 import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.lilylib.datagen.provider.LilyEnchantmentProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.registry.RegistryWrapper;
-
+import net.minecraft.core.HolderLookup;
 import java.util.concurrent.CompletableFuture;
 
 public class EnchantmentGenerator extends LilyEnchantmentProvider {
-    protected EnchantmentGenerator (FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    protected EnchantmentGenerator (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void generate (RegistryWrapper.WrapperLookup wrapperLookup, EnchantmentBuilder builder) {
+    protected void generate (HolderLookup.Provider wrapperLookup, EnchantmentBuilder builder) {
         builder.add(DSEnchantments.PARRY);
         builder.add(DSEnchantments.RIPOSTE);
         builder.add(DSEnchantments.DEFLECT);

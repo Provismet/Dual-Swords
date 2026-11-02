@@ -8,10 +8,10 @@ import net.fabricmc.fabric.api.util.TriState;
 public abstract class EnchantmentEventHandler {
     public static void registerAllowEnchanting () {
         EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
-            if (enchantment.isIn(DSEnchantmentTags.REQUIRES_PARRY) && target.getEnchantments().getEnchantments().stream().noneMatch(entry -> entry.matchesKey(DSEnchantments.PARRY.getKey()))) {
+            if (enchantment.is(DSEnchantmentTags.REQUIRES_PARRY) && target.getEnchantments().keySet().stream().noneMatch(entry -> entry.is(DSEnchantments.PARRY.getKey()))) {
                 return TriState.FALSE;
             }
-            else if (enchantment.isIn(DSEnchantmentTags.REQUIRES_LUNGE) && target.getEnchantments().getEnchantments().stream().noneMatch(entry -> entry.matchesKey(DSEnchantments.LUNGE.getKey()))) {
+            else if (enchantment.is(DSEnchantmentTags.REQUIRES_LUNGE) && target.getEnchantments().keySet().stream().noneMatch(entry -> entry.is(DSEnchantments.LUNGE.getKey()))) {
                 return TriState.FALSE;
             }
             return TriState.DEFAULT;
