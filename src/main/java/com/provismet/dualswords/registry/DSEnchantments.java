@@ -1,24 +1,21 @@
 package com.provismet.dualswords.registry;
 
-import com.provismet.CombatPlusCore.enchantment.effect.component.BlocksAttacksComponentEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.component.CooldownGroupComponentEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.component.MaxUseTimeComponentEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.doubleEntity.CodeExecutionDoubleEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.singleEntity.SetCooldownEnchantmentEffect;
-import com.provismet.CombatPlusCore.enchantment.loot.condition.singleEntity.ApplyToAttackerCondition;
-import com.provismet.CombatPlusCore.enchantment.loot.condition.singleEntity.SingleEntityLambdaCondition;
-import com.provismet.CombatPlusCore.registries.CPCEnchantmentComponentTypes;
-import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
+import com.provismet.combatplus.api.enchantment.effect.component.BlocksAttacksComponentEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.component.CooldownGroupComponentEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.component.MaxUseTimeComponentEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.doubleEntity.CodeExecutionDoubleEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.singleEntity.SetCooldownEnchantmentEffect;
+import com.provismet.combatplus.api.loot.condition.singleEntity.ApplyToAttackerCondition;
+import com.provismet.combatplus.api.loot.condition.singleEntity.SingleEntityLambdaCondition;
+import com.provismet.combatplus.api.tag.CombatPlusItemTags;
+import com.provismet.combatplus.registries.CombatPlusEnchantmentComponentTypes;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.enchantment.effect.stopped.ApplyToUserEffect;
 import com.provismet.dualswords.enchantment.effect.stopped.ReverseScalingCooldownEffect;
-
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import com.provismet.lilylib.container.EnchantmentContainer;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.advancements.criterion.DamageSourcePredicate;
 import net.minecraft.advancements.criterion.TagPredicate;
 import net.minecraft.core.Holder;
@@ -33,13 +30,16 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 
+import java.util.List;
+import java.util.Optional;
+
 public class DSEnchantments {
     public static final EnchantmentContainer PARRY = new EnchantmentContainer(
         DualSwordsMain.identifier("parry"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 5,
                 3,
                 Enchantment.dynamicCost(5, 5),
@@ -51,10 +51,10 @@ public class DSEnchantments {
             DSEnchantmentComponentTypes.USE_ACTION,
             ItemUseAnimation.BLOCK.name()
         ).withEffect(
-            CPCEnchantmentComponentTypes.POST_BLOCK,
+            CombatPlusEnchantmentComponentTypes.POST_BLOCK,
             new CodeExecutionDoubleEntityEffect(DualSwordsMain.identifier("parry"))
         ).withEffect(
-            CPCEnchantmentComponentTypes.DATA_COMPONENT,
+            CombatPlusEnchantmentComponentTypes.DATA_COMPONENT,
             new MaxUseTimeComponentEntityEffect(
                 LevelBasedValue.perLevel(10)
             )
@@ -69,18 +69,18 @@ public class DSEnchantments {
                 LevelBasedValue.constant(30)
             )
         ).withEffect(
-            CPCEnchantmentComponentTypes.DATA_COMPONENT,
+            CombatPlusEnchantmentComponentTypes.DATA_COMPONENT,
             new BlocksAttacksComponentEntityEffect(
                 LevelBasedValue.constant(0.1f),
                 LevelBasedValue.constant(1f),
                 List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
                 new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
-                Optional.of(DSDamageTypeTags.BYPASSES_PARRY),
+                Optional.of(damageLookup.getOrThrow(DSDamageTypeTags.BYPASSES_PARRY)),
                 Optional.of(Holder.direct(SoundEvents.PLAYER_ATTACK_SWEEP)),
                 Optional.of(SoundEvents.ITEM_BREAK)
             )
         ).withEffect(
-            CPCEnchantmentComponentTypes.DATA_COMPONENT,
+            CombatPlusEnchantmentComponentTypes.DATA_COMPONENT,
             new CooldownGroupComponentEntityEffect(DualSwordsMain.identifier("parry_cooldown"))
         ).exclusiveWith(
             enchantmentLookup.getOrThrow(DSEnchantmentTags.PARRY_EXCLUSIVE)
@@ -90,8 +90,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("riposte"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 3,
                 3,
                 Enchantment.dynamicCost(5, 5),
@@ -117,8 +117,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("deflect"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 3,
                 3,
                 Enchantment.dynamicCost(5, 5),
@@ -140,8 +140,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("lunge"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 5,
                 3,
                 Enchantment.dynamicCost(5, 5),
@@ -167,10 +167,10 @@ public class DSEnchantments {
                 LevelBasedValue.constant(9)
             )
         ).withEffect(
-            CPCEnchantmentComponentTypes.DATA_COMPONENT,
+            CombatPlusEnchantmentComponentTypes.DATA_COMPONENT,
             new MaxUseTimeComponentEntityEffect(LevelBasedValue.constant(72000))
         ).withEffect(
-            CPCEnchantmentComponentTypes.DATA_COMPONENT,
+            CombatPlusEnchantmentComponentTypes.DATA_COMPONENT,
             new CooldownGroupComponentEntityEffect(DualSwordsMain.identifier("lunge_cooldown"))
         ).exclusiveWith(
             enchantmentLookup.getOrThrow(DSEnchantmentTags.LUNGE_EXCLUSIVE)
@@ -180,8 +180,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("thrusting"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 3,
                 2,
                 Enchantment.dynamicCost(5, 10),
@@ -207,8 +207,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("forceful"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 3,
                 2,
                 Enchantment.dynamicCost(5, 10),
@@ -235,8 +235,8 @@ public class DSEnchantments {
         DualSwordsMain.identifier("daisho"),
         (itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup) -> Enchantment.enchantment(
             Enchantment.definition(
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_ENCHANTABLE),
-                itemLookup.getOrThrow(CPCItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_ENCHANTABLE),
+                itemLookup.getOrThrow(CombatPlusItemTags.OFFHAND_PRIMARY_ENCHANTABLE),
                 2,
                 5,
                 Enchantment.dynamicCost(20, 5),
@@ -245,7 +245,7 @@ public class DSEnchantments {
                 EquipmentSlotGroup.OFFHAND
             )
         ).withEffect(
-            CPCEnchantmentComponentTypes.BONUS_DAMAGE,
+            CombatPlusEnchantmentComponentTypes.BONUS_DAMAGE,
             new AddValue(
                 LevelBasedValue.perLevel(0.8f)
             ),
@@ -253,7 +253,7 @@ public class DSEnchantments {
                 SingleEntityLambdaCondition.builder(DualSwordsMain.identifier("dual_wielder"))
             )
         ).withEffect(
-            CPCEnchantmentComponentTypes.MODIFY_COOLDOWN,
+            CombatPlusEnchantmentComponentTypes.MODIFY_COOLDOWN,
             new AddValue(
                 LevelBasedValue.perLevel(8)
             )

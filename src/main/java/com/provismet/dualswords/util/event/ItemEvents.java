@@ -1,12 +1,10 @@
 package com.provismet.dualswords.util.event;
 
-import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.CombatPlusCore.items.component.MeleeWeaponComponent;
-import com.provismet.CombatPlusCore.registries.CPCDataComponentTypes;
-import com.provismet.CombatPlusCore.utility.item.AttributeIdentifiers;
-import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
+import com.provismet.combatplus.api.item.component.MeleeWeaponComponent;
+import com.provismet.combatplus.api.item.interfaces.DualWeapon;
+import com.provismet.combatplus.registries.CombatPlusDataComponentTypes;
+import com.provismet.combatplus.utility.item.CombatPlusAttributeIdentifiers;
 import com.provismet.dualswords.DualSwordsMain;
-import com.provismet.lilylib.util.MoreMath;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.core.component.DataComponents;
@@ -30,7 +28,7 @@ public abstract class ItemEvents {
                         .withModifierAdded(
                             Attributes.ATTACK_DAMAGE,
                             new AttributeModifier(
-                                AttributeIdentifiers.OFFHAND_DAMAGE,
+                                CombatPlusAttributeIdentifiers.OFFHAND_DAMAGE,
                                 dualWeapon.getOffhandDamage(item.getDefaultInstance()),
                                 AttributeModifier.Operation.ADD_VALUE
                             ),
@@ -40,7 +38,7 @@ public abstract class ItemEvents {
                     builder.set(DataComponents.ATTRIBUTE_MODIFIERS, component);
                 }
                 else {
-                    MeleeWeaponComponent component = item.getDefaultInstance().getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT);
+                    MeleeWeaponComponent component = item.getDefaultInstance().getOrDefault(CombatPlusDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT);
                     if (!component.isDual()) return;
 
                     ItemAttributeModifiers attributes = builder
@@ -48,7 +46,7 @@ public abstract class ItemEvents {
                         .withModifierAdded(
                             Attributes.ATTACK_DAMAGE,
                             new AttributeModifier(
-                                AttributeIdentifiers.OFFHAND_DAMAGE,
+                                CombatPlusAttributeIdentifiers.OFFHAND_DAMAGE,
                                 component.dualDamage(),
                                 AttributeModifier.Operation.ADD_VALUE
                             ),

@@ -1,18 +1,17 @@
 package com.provismet.dualswords.registry;
 
-import com.provismet.CombatPlusCore.enchantment.effect.doubleEntity.CodeExecutionDoubleEntityEffect;
-import com.provismet.CombatPlusCore.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
-import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.CombatPlusCore.items.component.MeleeWeaponComponent;
-import com.provismet.CombatPlusCore.registries.CPCDataComponentTypes;
-import com.provismet.CombatPlusCore.utility.CPCCallbackUtil;
-import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
-import com.provismet.CombatPlusCore.utility.CPCRegistries;
-import com.provismet.CombatPlusCore.utility.tag.CPCItemTags;
+import com.provismet.combatplus.api.enchantment.effect.doubleEntity.CodeExecutionDoubleEntityEffect;
+import com.provismet.combatplus.api.enchantment.effect.singleEntity.CodeExecutionSingleEntityEffect;
+import com.provismet.combatplus.api.item.component.MeleeWeaponComponent;
+import com.provismet.combatplus.api.item.interfaces.DualWeapon;
+import com.provismet.combatplus.api.tag.CombatPlusItemTags;
+import com.provismet.combatplus.registries.CombatPlusDataComponentTypes;
+import com.provismet.combatplus.utility.CombatPlusCallbackUtil;
+import com.provismet.combatplus.utility.CombatPlusEnchantmentHelper;
+import com.provismet.combatplus.utility.CombatPlusRegistries;
 import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntity;
-import java.util.function.Predicate;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -26,6 +25,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Predicate;
 
 public abstract class DSLambdas {
     public static void register () {
@@ -44,7 +45,7 @@ public abstract class DSLambdas {
         });
 
         registerSingleEntityCondition("dual_wielder", entity -> {
-            if (entity instanceof LivingEntity living) return living.getMainHandItem().is(CPCItemTags.DUAL_WEAPON) && living.getOffhandItem().is(CPCItemTags.DUAL_WEAPON);
+            if (entity instanceof LivingEntity living) return living.getMainHandItem().is(CombatPlusItemTags.DUAL_WEAPON) && living.getOffhandItem().is(CombatPlusItemTags.DUAL_WEAPON);
             return false;
         });
 
@@ -59,19 +60,19 @@ public abstract class DSLambdas {
                             itemDamage = dual.getOffhandDamage(context.itemStack()) * 1.2f;
                         }
                         else {
-                            itemDamage += context.itemStack().getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT).dualDamage() * 1.2f;
+                            itemDamage += context.itemStack().getOrDefault(CombatPlusDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT).dualDamage() * 1.2f;
                         }
 
-                        float finalDamage = CPCEnchantmentHelper.getDamage(world, context.itemStack(), target, riposte, itemDamage);
+                        float finalDamage = CombatPlusEnchantmentHelper.getDamage(world, context.itemStack(), target, riposte, itemDamage);
                         target.hurtServer(world, riposte, finalDamage);
                         float knockback = EnchantmentHelper.modifyKnockback(world, context.itemStack(), target, riposte, (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK));
                         target.knockback(knockback * 0.5, Mth.sin(player.getYRot() * ((float) Math.PI / 180)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180)));
-                        CPCCallbackUtil.postChargedHit(world, context.itemStack(), context.inSlot(), player, target);
+                        CombatPlusCallbackUtil.postChargedHit(world, context.itemStack(), context.inSlot(), player, target);
                     }
                     context.itemStack().hurtAndBreak(1, player, player.getUsedItemHand().asEquipmentSlot()); // Do not use posthit, it ONLY breaks the mainhand.
                 }
                 else if (attacker instanceof AbstractArrow persistentProjectile) {
-                    float deflectionLevel = CPCEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, world, context.itemStack(), player, 1);
+                    float deflectionLevel = CombatPlusEnchantmentHelper.modifyValue(DSEnchantmentComponentTypes.DEFLECTION_SPEED, world, context.itemStack(), player, 1);
                     persistentProjectile.setDeltaMovement(persistentProjectile.getDeltaMovement().scale(deflectionLevel)); // This gets multiplied by -0.1 in onEntityHit();
                 }
                 player.useItemRemaining = 1;
@@ -84,14 +85,14 @@ public abstract class DSLambdas {
     }
 
     private static void registerSingleEntityEffect (String name, CodeExecutionSingleEntityEffect.Lambda lambda) {
-        Registry.register(CPCRegistries.SINGLE_ENTITY_LAMBDA, DualSwordsMain.identifier(name), lambda);
+        Registry.register(CombatPlusRegistries.SINGLE_ENTITY_LAMBDA, DualSwordsMain.identifier(name), lambda);
     }
 
     private static void registerSingleEntityCondition (String name, Predicate<Entity> predicate) {
-        Registry.register(CPCRegistries.SINGLE_ENTITY_LAMBDA_CONDITION, DualSwordsMain.identifier(name), predicate);
+        Registry.register(CombatPlusRegistries.SINGLE_ENTITY_LAMBDA_CONDITION, DualSwordsMain.identifier(name), predicate);
     }
 
     private static void registerDoubleEntityEffect (String name, CodeExecutionDoubleEntityEffect.Lambda lambda) {
-        Registry.register(CPCRegistries.DOUBLE_ENTITY_LAMBDA, DualSwordsMain.identifier(name), lambda);
+        Registry.register(CombatPlusRegistries.DOUBLE_ENTITY_LAMBDA, DualSwordsMain.identifier(name), lambda);
     }
 }

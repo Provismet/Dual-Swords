@@ -1,6 +1,6 @@
 package com.provismet.dualswords.config;
 
-import com.provismet.CombatPlusCore.utility.CPCConfig;
+import com.provismet.combatplus.utility.CombatPlusConfig;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class DSSettings {
-    private static final Path FILE = CPCConfig.getConfigDirectory().resolve("dualswords.json");
+    private static final Path FILE = CombatPlusConfig.getConfigDirectory().resolve("dualswords.json");
 
     private static boolean overrideDatapacks = true;
     private static boolean allowFlippedSwords = true;
@@ -20,7 +20,7 @@ public class DSSettings {
 
     public static void write () {
         String jsonString = new JsonBuilder()
-            .append(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES, overrideDatapacks)
+            .append(CombatPlusConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES, overrideDatapacks)
             .append("render_flipped_swords", allowFlippedSwords)
             .append("render_flipped_lunge", allowFlippedLunge)
             .toString();
@@ -37,7 +37,7 @@ public class DSSettings {
         try {
             Optional.ofNullable(JsonReader.file(FILE.toFile()))
                 .ifPresent(reader -> {
-                    reader.getBoolean(CPCConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES).ifPresent(val -> DSSettings.overrideDatapacks = val);
+                    reader.getBoolean(CombatPlusConfig.KEY_OVERRIDE_DATAPACK_LOOT_TABLES).ifPresent(val -> DSSettings.overrideDatapacks = val);
                     reader.getBoolean("render_flipped_swords").ifPresent(val -> DSSettings.allowFlippedSwords = val);
                     reader.getBoolean("render_flipped_lunge").ifPresent(val -> DSSettings.allowFlippedLunge = val);
                 });

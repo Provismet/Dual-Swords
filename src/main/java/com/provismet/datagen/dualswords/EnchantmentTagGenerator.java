@@ -1,22 +1,23 @@
 package com.provismet.datagen.dualswords;
 
-import com.provismet.CombatPlusCore.utility.tag.CPCEnchantmentTags;
+import com.provismet.combatplus.api.tag.CombatPlusEnchantmentTags;
 import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import com.provismet.lilylib.datagen.tag.LilyTagProviders;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.tags.EnchantmentTags;
+
 import java.util.concurrent.CompletableFuture;
 
 public class EnchantmentTagGenerator extends LilyTagProviders.LilyEnchantmentTagProvider {
-    public EnchantmentTagGenerator(FabricDataOutput output, CompletableFuture<Provider> completableFuture) {
+    public EnchantmentTagGenerator(FabricPackOutput output, CompletableFuture<Provider> completableFuture) {
         super(output, completableFuture);
     }
 
     @Override
     protected void addTags (Provider arg) {
-        this.builder(CPCEnchantmentTags.OFFHAND)
+        this.builder(CombatPlusEnchantmentTags.OFFHAND)
             .add(DSEnchantments.PARRY.getKey())
             .add(DSEnchantments.RIPOSTE.getKey())
             .add(DSEnchantments.DEFLECT.getKey())
@@ -43,27 +44,27 @@ public class EnchantmentTagGenerator extends LilyTagProviders.LilyEnchantmentTag
 
         this.builder(DSEnchantmentTags.PARRY_EXCLUSIVE)
             .addOptionalTag(DSEnchantmentTags.LUNGE)
-            .addOptionalTag(CPCEnchantmentTags.OFFHAND_EXCLUSIVE);
+            .addOptionalTag(CombatPlusEnchantmentTags.OFFHAND_EXCLUSIVE);
 
         this.builder(DSEnchantmentTags.LUNGE_EXCLUSIVE)
             .addOptionalTag(DSEnchantmentTags.PARRY)
-            .addOptionalTag(CPCEnchantmentTags.OFFHAND_EXCLUSIVE);
+            .addOptionalTag(CombatPlusEnchantmentTags.OFFHAND_EXCLUSIVE);
 
         this.builder(DSEnchantmentTags.PARRY_BONUS_EXCLUSIVE)
             .add(DSEnchantments.RIPOSTE.getKey())
             .add(DSEnchantments.DEFLECT.getKey())
-            .addOptionalTag(CPCEnchantmentTags.OFFHAND_EXCLUSIVE);
+            .addOptionalTag(CombatPlusEnchantmentTags.OFFHAND_EXCLUSIVE);
 
         this.builder(DSEnchantmentTags.LUNGE_BONUS_EXCLUSIVE)
             .add(DSEnchantments.THRUSTING.getKey())
             .add(DSEnchantments.FORCEFUL.getKey())
-            .addOptionalTag(CPCEnchantmentTags.OFFHAND_EXCLUSIVE);
+            .addOptionalTag(CombatPlusEnchantmentTags.OFFHAND_EXCLUSIVE);
 
         this.builder(DSEnchantmentTags.OFFHAND_DAMAGE_EXCLUSIVE)
             .add(DSEnchantments.RIPOSTE.getKey())
             .add(DSEnchantments.THRUSTING.getKey())
             .add(DSEnchantments.DAISHO.getKey())
-            .addOptionalTag(CPCEnchantmentTags.OFFHAND_EXCLUSIVE);
+            .addOptionalTag(CombatPlusEnchantmentTags.OFFHAND_EXCLUSIVE);
 
         this.builder(DSEnchantmentTags.REVERSE_RENDER)
             .addOptionalTag(DSEnchantmentTags.PARRY);

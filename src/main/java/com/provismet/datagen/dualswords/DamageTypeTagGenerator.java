@@ -3,7 +3,7 @@ package com.provismet.datagen.dualswords;
 import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import com.provismet.lilylib.datagen.tag.LilyTagProviders;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -12,7 +12,7 @@ import net.minecraft.tags.TagKey;
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTypeTagGenerator extends LilyTagProviders.LilyDamageTypeTagProvider {
-    public DamageTypeTagGenerator (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public DamageTypeTagGenerator (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

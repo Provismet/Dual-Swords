@@ -5,8 +5,8 @@ import com.provismet.dualswords.enchantment.component.EnchantmentStoppedUsingEff
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
 
-public abstract class DSRegistries {
-    public static final Registry<MapCodec<? extends EnchantmentStoppedUsingEffect>> ENCHANTMENT_STOPPED_USING_EFFECT_TYPE = FabricRegistryBuilder.createSimple(DSRegistryKeys.STOPPED_USING_ENCHANTMENT_EFFECT).buildAndRegister();
+public interface DSRegistries {
+    Registry<MapCodec<? extends EnchantmentStoppedUsingEffect>> ENCHANTMENT_STOPPED_USING_EFFECT_TYPE = FabricRegistryBuilder.create(DSRegistryKeys.STOPPED_USING_ENCHANTMENT_EFFECT).buildAndRegister();
 
-    public static void init () {}
+    static void init () {}
 }

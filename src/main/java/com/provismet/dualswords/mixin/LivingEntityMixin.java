@@ -1,20 +1,12 @@
 package com.provismet.dualswords.mixin;
 
-import com.provismet.CombatPlusCore.interfaces.DualWeapon;
-import com.provismet.CombatPlusCore.interfaces.MeleeWeapon;
-import com.provismet.CombatPlusCore.items.component.MeleeWeaponComponent;
-import com.provismet.CombatPlusCore.registries.CPCDataComponentTypes;
-import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
+import com.provismet.combatplus.api.item.component.MeleeWeaponComponent;
+import com.provismet.combatplus.api.item.interfaces.DualWeapon;
+import com.provismet.combatplus.api.item.interfaces.MeleeWeapon;
+import com.provismet.combatplus.registries.CombatPlusDataComponentTypes;
+import com.provismet.combatplus.utility.CombatPlusEnchantmentHelper;
 import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.interfaceMixin.IMixinLivingEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +24,14 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(value=LivingEntity.class, priority=999)
 public abstract class LivingEntityMixin extends Entity implements IMixinLivingEntity {
@@ -88,11 +88,11 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                                 damage += dual.getOffhandDamage(this.lungeWeapon) * 2f;
                             }
                             else {
-                                damage += this.lungeWeapon.getOrDefault(CPCDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT).dualDamage() * 2f;
+                                damage += this.lungeWeapon.getOrDefault(CombatPlusDataComponentTypes.MELEE_WEAPON, MeleeWeaponComponent.DEFAULT).dualDamage() * 2f;
                             }
 
                             DamageSource lunge = DSDamageTypes.LUNGE.createDamageSource(player);
-                            damage = CPCEnchantmentHelper.getDamage(serverWorld, this.lungeWeapon, target, lunge, damage);
+                            damage = CombatPlusEnchantmentHelper.getDamage(serverWorld, this.lungeWeapon, target, lunge, damage);
                             float knockbackAmount = EnchantmentHelper.modifyKnockback(serverWorld, this.lungeWeapon, target, lunge, (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK));
                             target.hurtServer(serverWorld, lunge, damage);
                             if (knockbackAmount > 0) target.knockback(knockbackAmount * 0.5, this.getX() - target.getX(), this.getZ() - target.getZ());
@@ -100,7 +100,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                             if (this.lungeWeapon.getItem() instanceof MeleeWeapon melee) {
                                 melee.postChargedHit(this.lungeWeapon, player, target);
                             }
-                            CPCEnchantmentHelper.postChargedHit(serverWorld, player, target, this.lungeSlot);
+                            CombatPlusEnchantmentHelper.postChargedHit(serverWorld, player, target, this.lungeSlot);
                             this.lungeWeapon.hurtAndBreak(1, player, this.lungeSlot);
                         }
 

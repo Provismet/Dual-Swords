@@ -4,12 +4,13 @@ import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.lilylib.container.DamageTypeContainer;
 import com.provismet.lilylib.datagen.provider.LilyLanguageProvider;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
+
 import java.util.concurrent.CompletableFuture;
 
 public class LanguageGenerator extends LilyLanguageProvider {
-    protected LanguageGenerator (FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    protected LanguageGenerator (FabricPackOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(dataOutput, registryLookup);
     }
 

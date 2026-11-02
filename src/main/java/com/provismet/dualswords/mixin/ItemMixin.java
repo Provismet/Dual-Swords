@@ -1,8 +1,8 @@
 package com.provismet.dualswords.mixin;
 
 import com.mojang.datafixers.util.Pair;
-import com.provismet.CombatPlusCore.enchantment.loot.context.CPCLootContext;
-import com.provismet.CombatPlusCore.utility.CPCEnchantmentHelper;
+import com.provismet.combatplus.api.loot.context.CombatPlusLootContext;
+import com.provismet.combatplus.utility.CombatPlusEnchantmentHelper;
 import com.provismet.dualswords.DualSwordsMain;
 import com.provismet.dualswords.enchantment.component.EnchantmentStoppedUsingEffect;
 import com.provismet.dualswords.registry.DSEnchantmentComponentTypes;
@@ -58,9 +58,9 @@ public abstract class ItemMixin {
             else slot = null;
 
             if (slot != null) {
-                CPCEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
+                CombatPlusEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
                     for (ConditionalEffect<EnchantmentEntityEffect> effect : enchantment.value().getEffects(DSEnchantmentComponentTypes.ON_FINISHED_USING)) {
-                        if (effect.matches(CPCLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
+                        if (effect.matches(CombatPlusLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
                             effect.effect().apply(serverWorld, level, new EnchantedItemInUse(itemStack, slot, user), user, user.position());
                     }
                 }, user, slot);
@@ -77,9 +77,9 @@ public abstract class ItemMixin {
             else slot = null;
 
             if (slot != null) {
-                CPCEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
+                CombatPlusEnchantmentHelper.forEachEnchantment((enchantment, level, context) -> {
                     for (ConditionalEffect<EnchantmentStoppedUsingEffect> effect : enchantment.value().getEffects(DSEnchantmentComponentTypes.ON_STOPPED_USING)) {
-                        if (effect.matches(CPCLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
+                        if (effect.matches(CombatPlusLootContext.createSingleEntity(serverWorld, level, user, itemStack)))
                             effect.effect().onStoppedUsing(serverWorld, level, new EnchantedItemInUse(itemStack, slot, user), user, remainingUseTicks);
                     }
                 }, user, slot);
