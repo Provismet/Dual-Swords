@@ -22,13 +22,20 @@
 		"main": [
 			"com.provismet.dualswords.DualSwordsMain"
 		],
+		"client": [
+			"com.provismet.dualswords.DualSwordsClient"
+		],
 		"fabric-datagen": [
-			"com.provismet.datagen.dualswords.DualSwordsDatagen"
+			"com.provismet.dualswords.datagen.DualSwordsDatagen"
 		]
 	},
 
 	"mixins": [
-		"dualswords.mixins.json"
+		"dualswords.mixins.json",
+		{
+			"environment": "client",
+			"config": "dualswords.client.mixins.json"
+		}
 	],
 	"accessWidener": "dualswords.accesswidener",
 

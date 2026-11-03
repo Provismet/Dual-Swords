@@ -1,4 +1,4 @@
-package com.provismet.datagen.dualswords;
+package com.provismet.dualswords.datagen;
 
 import com.provismet.combatplus.api.tag.CombatPlusEnchantmentTags;
 import com.provismet.dualswords.registry.DSEnchantments;

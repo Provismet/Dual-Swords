@@ -6,14 +6,6 @@
     "ItemMixin",
     "LivingEntityMixin"
   ],
-  "client": [
-    "HeldItemFeatureRendererMixin",
-    "HeldItemRendererMixin",
-    "ItemModelManagerMixin",
-    "ItemRenderStateMixin",
-    "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
 	}

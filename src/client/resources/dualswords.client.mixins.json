@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "package": "com.provismet.dualswords.cmixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "HeldItemFeatureRendererMixin",
+        "HeldItemRendererMixin",
+        "ItemModelManagerMixin",
+        "ItemRenderStateMixin",
+        "LivingEntityRendererMixin",
+        "LivingEntityRenderStateMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

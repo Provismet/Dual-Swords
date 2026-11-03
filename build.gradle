@@ -16,18 +16,15 @@ repositories {
 	maven { url "https://jitpack.io" }
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs += [
-                    'src/main/generated'
-            ]
-        }
-    }
-}
-
 loom {
 	accessWidenerPath = file("src/main/resources/dualswords.accesswidener")
+	splitEnvironmentSourceSets()
+	mods {
+		"dualswords" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 }
 
 

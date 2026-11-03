@@ -1,4 +1,4 @@
-package com.provismet.dualswords.mixin;
+package com.provismet.dualswords.cmixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

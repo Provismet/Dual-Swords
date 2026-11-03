@@ -1,4 +1,4 @@
-package com.provismet.datagen.dualswords;
+package com.provismet.dualswords.datagen;
 
 import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.lilylib.datagen.provider.LilyEnchantmentProvider;

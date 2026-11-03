@@ -1,4 +1,4 @@
-package com.provismet.dualswords.mixin;
+package com.provismet.dualswords.cmixin;
 
 import com.provismet.dualswords.interfaceMixin.IMixinItemRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
