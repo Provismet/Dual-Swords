@@ -1,5 +1,6 @@
 package com.provismet.dualswords.datagen;
 
+import com.provismet.combatplus.api.tag.CombatPlusDamageTypeTags;
 import com.provismet.dualswords.DSDamageTypes;
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import com.provismet.lilylib.datagen.tag.LilyTagProviders;
@@ -28,7 +29,7 @@ public class DamageTypeTagGenerator extends LilyTagProviders.LilyDamageTypeTagPr
             .addOptionalTag(DamageTypeTags.IS_EXPLOSION)
             .addOptionalTag(TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("proviorigins", "disables_shields")));
 
-        this.builder(TagKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath("extended-enchanting", "melee")))
+        this.builder(CombatPlusDamageTypeTags.IS_MELEE)
             .addOptionalTag(DSDamageTypeTags.IS_OFFHANDED);
     }
 }
