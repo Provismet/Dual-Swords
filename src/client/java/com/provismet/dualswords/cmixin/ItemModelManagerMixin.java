@@ -21,7 +21,7 @@ public abstract class ItemModelManagerMixin {
     @Inject(method="appendItemLayers", at=@At("HEAD"))
     private void modifyItemRender (ItemStackRenderState renderState, ItemStack stack, ItemDisplayContext displayContext, Level world, ItemOwner heldItemContext, int seed, CallbackInfo ci) {
         ((IMixinItemRenderState)renderState).dual_Swords$setReverseRender(EnchantmentHelper.hasTag(stack, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords());
-        ((IMixinItemRenderState)renderState).dual_Swords$setFlippedSpear(stack.getUseAnimation() == ItemUseAnimation.SPEAR && EnchantmentHelper.hasTag(stack, DSEnchantmentTags.FLIPPED_SPEAR) && DSSettings.renderFlippedLunge());
+        ((IMixinItemRenderState)renderState).dual_Swords$setFlippedSpear(stack.getUseAnimation() == ItemUseAnimation.TRIDENT && EnchantmentHelper.hasTag(stack, DSEnchantmentTags.FLIPPED_SPEAR) && DSSettings.renderFlippedLunge());
         if (heldItemContext != null) {
             ((IMixinItemRenderState)renderState).dual_Swords$setIsActive(
                 heldItemContext.asLivingEntity() != null
