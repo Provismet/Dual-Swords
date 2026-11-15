@@ -66,7 +66,7 @@ public abstract class DSLambdas {
                         float finalDamage = CombatPlusEnchantmentHelper.getDamage(world, context.itemStack(), target, riposte, itemDamage);
                         target.hurtServer(world, riposte, finalDamage);
                         float knockback = EnchantmentHelper.modifyKnockback(world, context.itemStack(), target, riposte, (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK));
-                        target.knockback(knockback * 0.5, Mth.sin(player.getYRot() * ((float) Math.PI / 180)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180)));
+                        target.knockback(knockback * 0.5, Mth.sin(player.getYRot() * ((float) Math.PI / 180)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180)), riposte, finalDamage);
                         CombatPlusCallbackUtil.postChargedHit(world, context.itemStack(), context.inSlot(), player, target);
                     }
                     context.itemStack().hurtAndBreak(1, player, player.getUsedItemHand().asEquipmentSlot()); // Do not use posthit, it ONLY breaks the mainhand.

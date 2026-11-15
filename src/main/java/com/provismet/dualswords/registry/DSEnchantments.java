@@ -16,8 +16,8 @@ import com.provismet.dualswords.enchantment.effect.stopped.ReverseScalingCooldow
 import com.provismet.dualswords.util.tag.DSDamageTypeTags;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
 import com.provismet.lilylib.container.EnchantmentContainer;
-import net.minecraft.advancements.criterion.DamageSourcePredicate;
-import net.minecraft.advancements.criterion.TagPredicate;
+import net.minecraft.advancements.predicates.DamageSourcePredicate;
+import net.minecraft.advancements.predicates.TagPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.sounds.SoundEvents;

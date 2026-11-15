@@ -43,7 +43,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Redirect(
-        method = "renderArmWithItem",
+        method = "submitArmWithItem",
         slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/ItemUseAnimation;"),
             to = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isAutoSpinAttack()Z")
@@ -65,7 +65,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Inject(
-        method = "renderArmWithItem",
+        method = "submitArmWithItem",
         slice = @Slice(from=@At(value="INVOKE", target="Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/ItemUseAnimation;")),
         at = @At(
             value = "INVOKE",
@@ -82,7 +82,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Redirect(
-        method = "renderArmWithItem",
+        method = "submitArmWithItem",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
@@ -96,7 +96,7 @@ public abstract class HeldItemRendererMixin {
         else this.applyItemArmTransform(matrices, arm, equipProgress);
     }
 
-    @Inject(method="renderArmWithItem", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V", shift=At.Shift.AFTER))
+    @Inject(method="submitArmWithItem", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V", shift=At.Shift.AFTER))
     private void flipBlade (AbstractClientPlayer player, float tickProgress, float pitch, InteractionHand hand, float swingProgress, ItemStack item, float equipProgress, PoseStack matrices, SubmitNodeCollector orderedRenderCommandQueue, int light, CallbackInfo ci) {
         if (EnchantmentHelper.hasTag(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
             HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();

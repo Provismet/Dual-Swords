@@ -95,7 +95,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                             damage = CombatPlusEnchantmentHelper.getDamage(serverWorld, this.lungeWeapon, target, lunge, damage);
                             float knockbackAmount = EnchantmentHelper.modifyKnockback(serverWorld, this.lungeWeapon, target, lunge, (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK));
                             target.hurtServer(serverWorld, lunge, damage);
-                            if (knockbackAmount > 0) target.knockback(knockbackAmount * 0.5, this.getX() - target.getX(), this.getZ() - target.getZ());
+                            if (knockbackAmount > 0) target.knockback(knockbackAmount * 0.5, this.getX() - target.getX(), this.getZ() - target.getZ(), lunge, damage);
 
                             if (this.lungeWeapon.getItem() instanceof MeleeWeapon melee) {
                                 melee.postChargedHit(this.lungeWeapon, player, target);
