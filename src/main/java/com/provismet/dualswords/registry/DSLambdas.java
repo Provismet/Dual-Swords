@@ -33,12 +33,13 @@ public abstract class DSLambdas {
         registerSingleEntityEffect("lunge", (world, level, context, user, pos) -> {
             if (!(user instanceof Player player)) return;
 
-            if (player.onGround()) player.randomTeleport(player.getX(), player.getY() + 0.5, player.getZ(), false);
+            if (player.onGround()) player.randomTeleport(player.getX(), player.getY() + 0.5, player.getZ(), false, _ -> false);
             double dx = -Mth.sin(user.getYHeadRot() / Mth.RAD_TO_DEG);
             double dz = Mth.cos(user.getYHeadRot() / Mth.RAD_TO_DEG);
             Vec3 velocity = new Vec3(dx, 0.0, dz).scale(0.5 * level);
             player.push(velocity);
-            player.hurtMarked = true; // This is pretty much the new "velocityDirty". Not sure if Minecraft bug or not.
+            player.syncPosition = true;
+            player.syncVelocity = true; // This is pretty much the new "velocityDirty". Not sure if Minecraft bug or not.
             ((IMixinLivingEntity)player).dual_Swords$setLungeTicks(context.itemStack(), context.inSlot(), 30);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1f, 1f);
             context.itemStack().hurtAndBreak(1, player, player.getUsedItemHand().asEquipmentSlot());

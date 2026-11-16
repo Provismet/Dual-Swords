@@ -79,7 +79,7 @@ public abstract class LivingEntityMixin extends Entity implements IMixinLivingEn
                     if (other instanceof LivingEntity target) {
                         this.lungeTicks = 0;
                         this.setDeltaMovement(this.getDeltaMovement().scale(-0.2));
-                        this.hurtMarked = true;
+                        this.syncVelocity = true;
 
                         if ((LivingEntity)(Object)this instanceof Player player && this.lungeSlot != null) {
                             float damage = 0f;

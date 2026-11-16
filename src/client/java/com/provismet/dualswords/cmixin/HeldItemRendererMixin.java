@@ -5,9 +5,11 @@ import com.mojang.math.Axis;
 import com.provismet.dualswords.config.DSSettings;
 import com.provismet.dualswords.registry.DSEnchantments;
 import com.provismet.dualswords.util.tag.DSEnchantmentTags;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.state.level.FirstPersonHandsAndItemsRenderState;
+import net.minecraft.client.renderer.state.level.PlayerRenderState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ItemInHandRenderer.class)
+@Mixin(FirstPersonHandsAndItemsRenderer.class)
 public abstract class HeldItemRendererMixin {
     @Shadow protected abstract void applyItemArmTransform (PoseStack matrices, HumanoidArm arm, float equipProgress);
     @Shadow protected abstract void swingArm (float swingProgress, PoseStack matrices, int armX, HumanoidArm arm);
@@ -32,8 +34,8 @@ public abstract class HeldItemRendererMixin {
     private void applyParryOffset (PoseStack matrices, HumanoidArm arm, float equipProgress) {
         float armMultiplier = arm == HumanoidArm.RIGHT ? -1f : 1f;
         matrices.translate(0.75f * armMultiplier, 0f, 0.1f);
-        matrices.mulPose(Axis.XP.rotationDegrees(55f * (1f - equipProgress)));
-        matrices.mulPose(Axis.ZP.rotationDegrees(armMultiplier * 125f * (1f - equipProgress)));
+        matrices.rotate(Axis.XP.rotationDegrees(55f * (1f - equipProgress)));
+        matrices.rotate(Axis.ZP.rotationDegrees(armMultiplier * 125f * (1f - equipProgress)));
     }
 
     @Unique
@@ -44,23 +46,20 @@ public abstract class HeldItemRendererMixin {
 
     @Redirect(
         method = "submitArmWithItem",
-        slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/ItemUseAnimation;"),
-            to = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/AbstractClientPlayer;isAutoSpinAttack()Z")
-        ),
+        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/ItemUseAnimation;")),
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
+            target = "Lnet/minecraft/client/renderer/FirstPersonHandsAndItemsRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
             ordinal = 0
         )
     )
-    private void animateParry (ItemInHandRenderer instance, PoseStack matrices, HumanoidArm arm, float equipProgress, AbstractClientPlayer player, float tickProgress, float pitch, InteractionHand hand, float swingProgress, ItemStack item, float equipProgress1, PoseStack matrices1, SubmitNodeCollector orderedRenderCommandQueue, int light) {
-        if (EnchantmentHelper.hasTag(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords()) {
-            this.applyEquipOffsetUpwards(matrices1, arm, equipProgress1);
-            this.applyParryOffset(matrices1, arm, equipProgress1);
+    private void animateParry (FirstPersonHandsAndItemsRenderer instance, PoseStack poseStack, HumanoidArm arm, float inverseArmHeight, PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight1, PoseStack poseStack1, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+        if (EnchantmentHelper.hasTag(itemStack, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords()) {
+            this.applyEquipOffsetUpwards(poseStack, arm, inverseArmHeight);
+            this.applyParryOffset(poseStack, arm, inverseArmHeight);
         }
         else {
-            this.applyItemArmTransform(matrices1, arm, equipProgress1);
+            this.applyItemArmTransform(poseStack, arm, inverseArmHeight);
         }
     }
 
@@ -69,15 +68,15 @@ public abstract class HeldItemRendererMixin {
         slice = @Slice(from=@At(value="INVOKE", target="Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/ItemUseAnimation;")),
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
+            target = "Lnet/minecraft/client/renderer/FirstPersonHandsAndItemsRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
             shift = At.Shift.AFTER,
             ordinal = 0
         )
     )
-    private void animateLunge (AbstractClientPlayer player, float tickProgress, float pitch, InteractionHand hand, float swingProgress, ItemStack item, float equipProgress, PoseStack matrices, SubmitNodeCollector orderedRenderCommandQueue, int light, CallbackInfo ci) {
-        if (EnchantmentHelper.getItemEnchantmentLevel(DSEnchantments.LUNGE.getEntryOrThrow(player.level().registryAccess()), item) > 0) {
-            matrices.mulPose(Axis.XN.rotationDegrees(75f * (1 - equipProgress)));
-            matrices.translate(0f, -0.75f, 0.75f);
+    private void animateLunge (PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
+        if (itemStack.getEnchantments().keySet().stream().anyMatch(holder -> holder.is(DSEnchantments.LUNGE.getKey()))) {
+            poseStack.rotate(Axis.XN.rotationDegrees(75f * (1 - inverseArmHeight)));
+            poseStack.translate(0f, -0.75f, 0.75f);
         }
     }
 
@@ -85,24 +84,27 @@ public abstract class HeldItemRendererMixin {
         method = "submitArmWithItem",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
+            target = "Lnet/minecraft/client/renderer/FirstPersonHandsAndItemsRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V",
             ordinal = 4
         )
     )
-    private void applyUpwardsEquip (ItemInHandRenderer instance, PoseStack matrices, HumanoidArm arm, float equipProgress, AbstractClientPlayer player, float tickProgress, float pitch, InteractionHand hand, float swingProgress, ItemStack item, float equipProgress1, PoseStack matrices1, SubmitNodeCollector orderedRenderCommandQueue, int light) {
-        if (EnchantmentHelper.hasTag(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
-            this.applyEquipOffsetUpwards(matrices1, arm, equipProgress);
+    private void applyUpwardsEquip (FirstPersonHandsAndItemsRenderer instance, PoseStack poseStack, HumanoidArm arm, float inverseArmHeight, PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight1, PoseStack poseStack1, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+        if (EnchantmentHelper.hasTag(itemStack, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && attack == 0) {
+            this.applyEquipOffsetUpwards(poseStack, arm, inverseArmHeight);
         }
-        else this.applyItemArmTransform(matrices, arm, equipProgress);
+        else this.applyItemArmTransform(poseStack, arm, inverseArmHeight);
     }
 
     @Inject(method="submitArmWithItem", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V", shift=At.Shift.AFTER))
-    private void flipBlade (AbstractClientPlayer player, float tickProgress, float pitch, InteractionHand hand, float swingProgress, ItemStack item, float equipProgress, PoseStack matrices, SubmitNodeCollector orderedRenderCommandQueue, int light, CallbackInfo ci) {
-        if (EnchantmentHelper.hasTag(item, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && swingProgress == 0) {
-            HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+    private void flipBlade (PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
+        if (EnchantmentHelper.hasTag(itemStack, DSEnchantmentTags.REVERSE_RENDER) && DSSettings.renderFlippedSwords() && attack == 0) {
+            AvatarRenderState avatarRenderState = playerState.avatarRenderState;
+            if (avatarRenderState == null) return;
+
+            HumanoidArm arm = (hand == InteractionHand.MAIN_HAND) ? avatarRenderState.mainArm : avatarRenderState.mainArm.getOpposite();
             float sideMultiplier = arm == HumanoidArm.RIGHT ? -1f : 1f;
-            matrices.translate(-0.15f * sideMultiplier, -0.9f, -1.5f);
-            matrices.mulPose(Axis.XP.rotationDegrees(180f));
+            poseStack.translate(-0.15f * sideMultiplier, -0.9f, -1.5f);
+            poseStack.rotate(Axis.XP.rotationDegrees(180f));
         }
     }
 }

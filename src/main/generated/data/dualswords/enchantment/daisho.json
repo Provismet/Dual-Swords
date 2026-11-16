@@ -15,11 +15,11 @@
           }
         },
         "requirements": {
+          "type": "combat-plus:apply_to_attacker",
           "applied_condition": {
-            "condition": "combat-plus:code_execution_single_entity_condition",
+            "type": "combat-plus:code_execution_single_entity_condition",
             "function": "dualswords:dual_wielder"
-          },
-          "condition": "combat-plus:apply_to_attacker"
+          }
         }
       }
     ],

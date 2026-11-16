@@ -31,16 +31,16 @@ public abstract class HeldItemFeatureRendererMixin<S extends ArmedEntityRenderSt
 
         if (((IMixinItemRenderState)itemRenderState).dual_Swords$shouldReverseRender()) {
             matrices.translate(0f, -0.25f, 0.2f);
-            matrices.mulPose(Axis.XP.rotationDegrees(180f));
+            matrices.rotate(Axis.XP.rotationDegrees(180f));
             
             if (activeItem) {
                 float armMultiplier = arm == HumanoidArm.RIGHT ? -1f : 1f;
-                matrices.mulPose(Axis.ZP.rotationDegrees(armMultiplier * 45f));
+                matrices.rotate(Axis.ZP.rotationDegrees(armMultiplier * 45f));
             }
         }
         else if (activeItem && ((IMixinItemRenderState)itemRenderState).dual_Swords$shouldFlipSpear()) {
             matrices.translate(0f, -0.25f, 0.2f);
-            matrices.mulPose(Axis.XP.rotationDegrees(180f));
+            matrices.rotate(Axis.XP.rotationDegrees(180f));
         }
     }
 }

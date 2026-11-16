@@ -106,7 +106,7 @@ public class DSEnchantments {
             ),
             DamageSourceCondition.hasDamageSource(
                 DamageSourcePredicate.Builder.damageType().tag(
-                    TagPredicate.is(DSDamageTypeTags.IS_OFFHANDED)
+                    TagPredicate.is(damageLookup, DSDamageTypeTags.IS_OFFHANDED)
                 )
             )
         ).exclusiveWith(
@@ -196,7 +196,7 @@ public class DSEnchantments {
             ),
             DamageSourceCondition.hasDamageSource(
                 DamageSourcePredicate.Builder.damageType().tag(
-                    TagPredicate.is(DSDamageTypeTags.IS_OFFHANDED)
+                    TagPredicate.is(damageLookup, DSDamageTypeTags.IS_OFFHANDED)
                 )
             )
         ).exclusiveWith(
@@ -223,7 +223,7 @@ public class DSEnchantments {
             ),
             DamageSourceCondition.hasDamageSource(
                 DamageSourcePredicate.Builder.damageType().tag(
-                    TagPredicate.is(DSDamageTypeTags.IS_OFFHANDED)
+                    TagPredicate.is(damageLookup, DSDamageTypeTags.IS_OFFHANDED)
                 )
             )
         ).exclusiveWith(
